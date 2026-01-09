@@ -4,6 +4,7 @@ import { getRecommendationById } from '@/lib/db';
 import Navigation from '@/components/Navigation';
 import StarRating from '@/components/StarRating';
 import ReviewsSection from '@/components/ReviewsSection';
+import BottomNav from '@/components/BottomNav';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -48,7 +49,7 @@ export default async function RecommendDetailPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0">
       <Navigation />
 
       {/* Hero Area with Gradient */}
@@ -218,6 +219,9 @@ export default async function RecommendDetailPage({ params }: PageProps) {
           initialReviewCount={recommendation.review_count}
         />
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }

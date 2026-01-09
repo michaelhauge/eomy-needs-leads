@@ -7,6 +7,7 @@ import CategoryPills from '@/components/CategoryPills';
 import Navigation from '@/components/Navigation';
 import EmptyState from '@/components/EmptyState';
 import { SkeletonGrid } from '@/components/SkeletonCard';
+import BottomNav from '@/components/BottomNav';
 
 interface PageProps {
   searchParams: Promise<{
@@ -95,7 +96,7 @@ export default async function RecommendPage({ searchParams }: PageProps) {
   const topCategories = await getTopCategories(8);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0">
       <Navigation />
 
       {/* Main Content */}
@@ -130,6 +131,9 @@ export default async function RecommendPage({ searchParams }: PageProps) {
           </Suspense>
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }
