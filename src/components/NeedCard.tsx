@@ -31,35 +31,35 @@ export default function NeedCard({ need }: NeedCardProps) {
   const leadsCount = Number(need.leads_count) || 0;
 
   return (
-    <Link href={`/need/${need.id}`} className="block active:scale-[0.98] transition-transform">
-      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border border-gray-100 h-full flex flex-col min-h-[140px] sm:min-h-[160px]">
-        {/* Category Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-3 sm:px-4 py-2">
-          <span className="text-white text-xs font-medium">
-            {need.category_name || 'Uncategorized'}
-          </span>
-        </div>
-
+    <Link href={`/need/${need.id}`} className="block active:scale-[0.98] transition-all duration-200">
+      <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden h-full flex flex-col min-h-[180px] sm:min-h-[200px] border border-slate-100">
         {/* Content */}
-        <div className="p-3 sm:p-4 flex-1 flex flex-col">
-          <h3 className="font-semibold text-gray-800 text-base sm:text-lg mb-2 line-clamp-2">
+        <div className="p-5 sm:p-6 flex-1 flex flex-col">
+          {/* Category Badge */}
+          <div className="mb-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+              {need.category_name || 'Uncategorized'}
+            </span>
+          </div>
+
+          <h3 className="font-semibold text-slate-900 text-lg leading-snug mb-2 line-clamp-2">
             {need.title}
           </h3>
 
-          <div className="mt-auto pt-3 sm:pt-4 flex flex-wrap items-center justify-between gap-2">
+          <div className="mt-auto pt-3 flex flex-wrap items-center justify-between gap-2">
             {/* Date */}
-            <span className="text-gray-500 text-xs sm:text-sm">
+            <span className="text-slate-500 text-sm">
               {formatDate(need.date_of_need)}
             </span>
 
             {/* Status & Leads */}
-            <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="flex items-center gap-2">
               {leadsCount > 0 && (
-                <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                <span className="bg-slate-100 text-slate-700 text-xs px-3 py-1 rounded-full font-medium">
                   {leadsCount} lead{leadsCount !== 1 ? 's' : ''}
                 </span>
               )}
-              <span className={`text-xs px-2 py-1 rounded-full font-medium ${getStatusColor(need.status)}`}>
+              <span className={`text-xs px-3 py-1 rounded-full font-medium ${getStatusColor(need.status)}`}>
                 {need.status}
               </span>
             </div>

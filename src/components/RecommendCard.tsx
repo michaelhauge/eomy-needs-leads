@@ -45,46 +45,46 @@ export default function RecommendCard({ recommendation }: RecommendCardProps) {
   const hasQuickActions = phoneNumber || websiteUrl;
 
   return (
-    <Link href={`/recommend/${recommendation.id}`} className="block active:scale-[0.98] transition-transform group">
-      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden border border-gray-100 h-full flex flex-col min-h-[140px] sm:min-h-[160px] relative">
-        {/* Category Header */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-500 px-3 sm:px-4 py-2">
-          <span className="text-white text-xs font-medium">
-            {recommendation.category_name || 'General'}
-          </span>
-        </div>
-
-        {/* Quick Action Buttons */}
-        {hasQuickActions && (
-          <div className="absolute top-11 right-2 flex gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-            {phoneNumber && (
-              <a
-                href={`tel:${phoneNumber}`}
-                onClick={(e) => e.stopPropagation()}
-                className="w-9 h-9 flex items-center justify-center bg-teal-50 hover:bg-teal-100 text-teal-600 rounded-full shadow-sm border border-teal-200 transition-colors"
-                title="Call"
-              >
-                <PhoneIcon className="w-4 h-4" />
-              </a>
-            )}
-            {websiteUrl && (
-              <a
-                href={websiteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="w-9 h-9 flex items-center justify-center bg-teal-50 hover:bg-teal-100 text-teal-600 rounded-full shadow-sm border border-teal-200 transition-colors"
-                title="Visit Website"
-              >
-                <GlobeIcon className="w-4 h-4" />
-              </a>
-            )}
-          </div>
-        )}
-
+    <Link href={`/recommend/${recommendation.id}`} className="block active:scale-[0.98] transition-all duration-200 group">
+      <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden h-full flex flex-col min-h-[180px] sm:min-h-[200px] relative border border-slate-100">
         {/* Content */}
-        <div className="p-3 sm:p-4 flex-1 flex flex-col">
-          <h3 className="font-semibold text-gray-800 text-base sm:text-lg mb-1 line-clamp-2">
+        <div className="p-5 sm:p-6 flex-1 flex flex-col">
+          {/* Category Badge */}
+          <div className="mb-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-teal-100 text-teal-700">
+              {recommendation.category_name || 'General'}
+            </span>
+          </div>
+
+          {/* Quick Action Buttons */}
+          {hasQuickActions && (
+            <div className="absolute top-5 right-5 flex gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
+              {phoneNumber && (
+                <a
+                  href={`tel:${phoneNumber}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-9 h-9 flex items-center justify-center bg-teal-50 hover:bg-teal-100 text-teal-600 rounded-full shadow-sm border border-teal-200 transition-colors"
+                  title="Call"
+                >
+                  <PhoneIcon className="w-4 h-4" />
+                </a>
+              )}
+              {websiteUrl && (
+                <a
+                  href={websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-9 h-9 flex items-center justify-center bg-teal-50 hover:bg-teal-100 text-teal-600 rounded-full shadow-sm border border-teal-200 transition-colors"
+                  title="Visit Website"
+                >
+                  <GlobeIcon className="w-4 h-4" />
+                </a>
+              )}
+            </div>
+          )}
+
+          <h3 className="font-semibold text-slate-900 text-lg leading-snug mb-2 line-clamp-2">
             {recommendation.name}
           </h3>
 
@@ -99,24 +99,24 @@ export default function RecommendCard({ recommendation }: RecommendCardProps) {
               />
             </div>
           ) : (
-            <p className="text-gray-400 text-xs mb-2">No reviews yet</p>
+            <p className="text-slate-400 text-xs mb-2">No reviews yet</p>
           )}
 
           {recommendation.description && (
-            <p className="text-gray-600 text-xs sm:text-sm line-clamp-2 mb-2">
+            <p className="text-slate-600 text-sm line-clamp-2 mb-3">
               {recommendation.description}
             </p>
           )}
 
-          <div className="mt-auto pt-2 sm:pt-3 flex items-center justify-between">
+          <div className="mt-auto pt-3 flex items-center justify-between">
             {/* Recommended by */}
-            <span className="text-gray-500 text-xs sm:text-sm">
+            <span className="text-slate-500 text-sm">
               by {recommendation.recommended_by}
             </span>
 
             {/* Address snippet if available */}
             {recommendation.address && (
-              <span className="text-gray-400 text-xs truncate max-w-[120px]">
+              <span className="text-slate-400 text-xs truncate max-w-[120px]">
                 {recommendation.address.split(',')[0]}
               </span>
             )}
