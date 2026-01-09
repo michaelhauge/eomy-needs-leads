@@ -79,7 +79,7 @@ export default function NewRecommendationPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-50">
         <Navigation />
         <main className="max-w-2xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 text-center">
@@ -88,9 +88,9 @@ export default function NewRecommendationPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Thank You!</h2>
-            <p className="text-gray-600">Your recommendation has been submitted.</p>
-            <p className="text-gray-500 text-sm mt-2">Redirecting to recommendations...</p>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Thank You!</h2>
+            <p className="text-slate-600">Your recommendation has been submitted.</p>
+            <p className="text-slate-500 text-sm mt-2">Redirecting to recommendations...</p>
           </div>
         </main>
       </div>
@@ -98,14 +98,14 @@ export default function NewRecommendationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <Navigation />
 
       <main className="max-w-2xl mx-auto px-4 py-4 sm:py-8">
         {/* Back link */}
         <Link
           href="/recommend"
-          className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-800 mb-4 transition-colors text-sm sm:text-base"
+          className="inline-flex items-center gap-2 text-teal-600 hover:text-teal-700 mb-4 transition-colors text-sm sm:text-base"
         >
           <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -123,14 +123,14 @@ export default function NewRecommendationPage() {
           {/* Form */}
           <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-5">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 border border-red-400 ring-2 ring-red-400/20 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             {/* Business Name */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">
                 Business Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -141,13 +141,13 @@ export default function NewRecommendationPage() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g., ABC Consulting"
-                className="w-full min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-base"
+                className="w-full h-[52px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none text-base placeholder:text-slate-400 transition-all duration-200"
               />
             </div>
 
             {/* Category */}
             <div>
-              <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="category_id" className="block text-sm font-medium text-slate-700 mb-2">
                 Category
               </label>
               <select
@@ -155,9 +155,9 @@ export default function NewRecommendationPage() {
                 name="category_id"
                 value={formData.category_id}
                 onChange={handleChange}
-                className="w-full min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none bg-white cursor-pointer text-base"
+                className="w-full h-[52px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none bg-white cursor-pointer text-base text-slate-700 transition-all duration-200"
               >
-                <option value="">Select a category</option>
+                <option value="" className="text-slate-400">Select a category</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.name}
@@ -168,39 +168,37 @@ export default function NewRecommendationPage() {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-2">
                 Description
               </label>
               <textarea
                 id="description"
                 name="description"
-                rows={4}
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="What services do they offer? Why do you recommend them?"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none text-base"
+                className="w-full min-h-[120px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none resize-none text-base placeholder:text-slate-400 transition-all duration-200"
               />
             </div>
 
             {/* Address */}
             <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="address" className="block text-sm font-medium text-slate-700 mb-2">
                 Address
               </label>
               <textarea
                 id="address"
                 name="address"
-                rows={2}
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="e.g., Level 10, Menara XYZ, Jalan Ampang, 50450 Kuala Lumpur"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none text-base"
+                className="w-full min-h-[120px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none resize-none text-base placeholder:text-slate-400 transition-all duration-200"
               />
             </div>
 
             {/* Website URL */}
             <div>
-              <label htmlFor="website_url" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="website_url" className="block text-sm font-medium text-slate-700 mb-2">
                 Website
               </label>
               <input
@@ -210,29 +208,28 @@ export default function NewRecommendationPage() {
                 value={formData.website_url}
                 onChange={handleChange}
                 placeholder="e.g., www.example.com"
-                className="w-full min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-base"
+                className="w-full h-[52px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none text-base placeholder:text-slate-400 transition-all duration-200"
               />
             </div>
 
             {/* Contact Info */}
             <div>
-              <label htmlFor="contact_info" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="contact_info" className="block text-sm font-medium text-slate-700 mb-2">
                 Contact Information
               </label>
               <textarea
                 id="contact_info"
                 name="contact_info"
-                rows={3}
                 value={formData.contact_info}
                 onChange={handleChange}
                 placeholder="Phone, email, website, address, etc."
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none text-base"
+                className="w-full min-h-[120px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none resize-none text-base placeholder:text-slate-400 transition-all duration-200"
               />
             </div>
 
             {/* Your Name */}
             <div>
-              <label htmlFor="recommended_by" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="recommended_by" className="block text-sm font-medium text-slate-700 mb-2">
                 Your Name <span className="text-red-500">*</span>
               </label>
               <input
@@ -243,7 +240,7 @@ export default function NewRecommendationPage() {
                 value={formData.recommended_by}
                 onChange={handleChange}
                 placeholder="Your name"
-                className="w-full min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-base"
+                className="w-full h-[52px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none text-base placeholder:text-slate-400 transition-all duration-200"
               />
             </div>
 
@@ -252,7 +249,7 @@ export default function NewRecommendationPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full min-h-[48px] px-6 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full h-12 px-8 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit Recommendation'}
               </button>

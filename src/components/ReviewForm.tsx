@@ -84,18 +84,18 @@ export default function ReviewForm({ recommendationId, recommendationName, onSuc
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-      <h3 className="font-semibold text-gray-800 mb-4">Write a Review for {recommendationName}</h3>
+    <form onSubmit={handleSubmit} className="bg-slate-50 rounded-lg p-4 sm:p-5 border border-slate-200">
+      <h3 className="font-semibold text-slate-900 mb-4">Write a Review for {recommendationName}</h3>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm mb-4">
+        <div className="bg-red-50 border border-red-400 ring-2 ring-red-400/20 text-red-700 px-3 py-2 rounded-lg text-sm mb-4">
           {error}
         </div>
       )}
 
       {/* Star Rating */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-700 mb-2">
           Your Rating <span className="text-red-500">*</span>
         </label>
         <StarRating
@@ -108,7 +108,7 @@ export default function ReviewForm({ recommendationId, recommendationName, onSuc
 
       {/* Reviewer Name */}
       <div className="mb-4">
-        <label htmlFor="reviewer-name" className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor="reviewer-name" className="block text-sm font-medium text-slate-700 mb-2">
           Your Name <span className="text-red-500">*</span>
         </label>
         <input
@@ -117,22 +117,21 @@ export default function ReviewForm({ recommendationId, recommendationName, onSuc
           value={reviewerName}
           onChange={(e) => setReviewerName(e.target.value)}
           placeholder="Enter your name"
-          className="w-full min-h-[44px] px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-base"
+          className="w-full h-[52px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none text-base placeholder:text-slate-400 transition-all duration-200"
         />
       </div>
 
       {/* Review Text */}
       <div className="mb-4">
-        <label htmlFor="review-text" className="block text-sm font-medium text-gray-700 mb-1">
-          Your Review <span className="text-gray-400">(optional)</span>
+        <label htmlFor="review-text" className="block text-sm font-medium text-slate-700 mb-2">
+          Your Review <span className="text-slate-400">(optional)</span>
         </label>
         <textarea
           id="review-text"
-          rows={3}
           value={reviewText}
           onChange={(e) => setReviewText(e.target.value)}
           placeholder="Share your experience with this business..."
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none text-base"
+          className="w-full min-h-[120px] px-4 py-3 border-[1.5px] border-slate-200 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none resize-none text-base placeholder:text-slate-400 transition-all duration-200"
         />
       </div>
 
@@ -140,7 +139,7 @@ export default function ReviewForm({ recommendationId, recommendationName, onSuc
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full min-h-[44px] px-4 py-2 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full h-12 px-6 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Submitting...' : 'Submit Review'}
       </button>
