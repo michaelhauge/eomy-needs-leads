@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { getRecommendations, getCategoriesWithCounts } from '@/lib/db';
+import { getRecommendations, getCategoriesWithCounts, SortOption } from '@/lib/db';
 import RecommendCard from '@/components/RecommendCard';
 import RecommendFilters from '@/components/RecommendFilters';
 import Navigation from '@/components/Navigation';
@@ -10,16 +10,19 @@ interface PageProps {
     search?: string;
     category?: string;
     minRating?: string;
+    sort?: SortOption;
   }>;
 }
 
 async function RecommendationsGrid({ searchParams }: { searchParams: PageProps['searchParams'] }) {
   const params = await searchParams;
   const minRating = params.minRating ? parseInt(params.minRating, 10) : undefined;
+  const sort = params.sort || 'rating';
   const recommendations = await getRecommendations({
     search: params.search,
     categorySlug: params.category,
     minRating,
+    sort,
     limit: 100,
   });
 
@@ -50,6 +53,7 @@ async function RecommendationsGrid({ searchParams }: { searchParams: PageProps['
 async function Filters({ searchParams }: { searchParams: PageProps['searchParams'] }) {
   const params = await searchParams;
   const minRating = params.minRating ? parseInt(params.minRating, 10) : undefined;
+  const sort = params.sort || 'rating';
 
   const categories = await getCategoriesWithCounts();
 
@@ -62,6 +66,7 @@ async function Filters({ searchParams }: { searchParams: PageProps['searchParams
     search: params.search,
     categorySlug: params.category,
     minRating,
+    sort,
     limit: 1000,
   });
   const filteredCount = filteredRecommendations.length;

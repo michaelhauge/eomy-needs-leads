@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useState, useEffect, useCallback } from 'react';
-import { Category } from '@/lib/db';
+import { Category, SortOption } from '@/lib/db';
 
 interface RecommendFiltersProps {
   categories: Category[];
@@ -17,6 +17,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
   const currentCategory = searchParams.get('category') || '';
   const currentSearch = searchParams.get('search') || '';
   const currentMinRating = searchParams.get('minRating') || '';
+  const currentSort = (searchParams.get('sort') || 'rating') as SortOption;
 
   const [searchValue, setSearchValue] = useState(currentSearch);
 
@@ -62,6 +63,16 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
       params.set('minRating', e.target.value);
     } else {
       params.delete('minRating');
+    }
+    router.push(`/recommend?${params.toString()}`);
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (e.target.value && e.target.value !== 'rating') {
+      params.set('sort', e.target.value);
+    } else {
+      params.delete('sort'); // 'rating' is default, no need to include in URL
     }
     router.push(`/recommend?${params.toString()}`);
   };
@@ -147,6 +158,22 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
           <option value="">All Ratings</option>
           <option value="4">4+ Stars</option>
           <option value="3">3+ Stars</option>
+        </select>
+
+        {/* Sort dropdown */}
+        <select
+          value={currentSort}
+          onChange={handleSortChange}
+          className={`flex-1 sm:flex-none w-full sm:w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+            currentSort !== 'rating'
+              ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
+              : 'border-gray-200 bg-white'
+          }`}
+        >
+          <option value="rating">Highest Rated</option>
+          <option value="reviews">Most Reviewed</option>
+          <option value="newest">Newest</option>
+          <option value="name">A-Z</option>
         </select>
 
         {/* Add button */}
