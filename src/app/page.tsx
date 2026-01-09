@@ -9,6 +9,7 @@ import LeaderboardSidebar from '@/components/LeaderboardSidebar';
 import Navigation from '@/components/Navigation';
 import HomeRecommendSearch from '@/components/HomeRecommendSearch';
 import RecommendCard from '@/components/RecommendCard';
+import { SkeletonGrid } from '@/components/SkeletonCard';
 
 interface PageProps {
   searchParams: Promise<{
@@ -116,9 +117,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           <Suspense
             fallback={
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-2xl shadow-md h-40 sm:h-48 animate-pulse" />
-                ))}
+                <SkeletonGrid count={4} variant="recommend" />
               </div>
             }
           >
@@ -144,7 +143,7 @@ export default async function HomePage({ searchParams }: PageProps) {
       <main className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         {/* Filters */}
         <div className="mb-6">
-          <Suspense fallback={<div className="h-24 sm:h-12 bg-gray-200 rounded-lg animate-pulse" />}>
+          <Suspense fallback={<div className="h-24 sm:h-12 bg-slate-200 rounded-lg animate-shimmer" />}>
             <Filters />
           </Suspense>
         </div>
@@ -154,13 +153,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           <div className="flex-1 order-1">
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               <Suspense
-                fallback={
-                  <>
-                    {[...Array(6)].map((_, i) => (
-                      <div key={i} className="bg-white rounded-xl shadow-md h-40 sm:h-48 animate-pulse" />
-                    ))}
-                  </>
-                }
+                fallback={<SkeletonGrid count={6} variant="need" />}
               >
                 <NeedsGrid searchParams={searchParams} />
               </Suspense>
@@ -171,7 +164,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           <div className="lg:w-80 order-2">
             <Suspense
               fallback={
-                <div className="bg-white rounded-xl shadow-md p-6 h-64 animate-pulse" />
+                <div className="bg-white rounded-2xl shadow-md p-6 h-64 animate-shimmer" />
               }
             >
               <Leaderboard />

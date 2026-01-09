@@ -6,6 +6,7 @@ import RecommendFilters from '@/components/RecommendFilters';
 import CategoryPills from '@/components/CategoryPills';
 import Navigation from '@/components/Navigation';
 import EmptyState from '@/components/EmptyState';
+import { SkeletonGrid } from '@/components/SkeletonCard';
 
 interface PageProps {
   searchParams: Promise<{
@@ -109,7 +110,7 @@ export default async function RecommendPage({ searchParams }: PageProps) {
 
         {/* Filters */}
         <div className="mb-6">
-          <Suspense fallback={<div className="h-24 sm:h-12 bg-slate-200 rounded-lg animate-pulse" />}>
+          <Suspense fallback={<div className="h-24 sm:h-12 bg-slate-200 rounded-lg animate-shimmer" />}>
             <Filters searchParams={searchParams} />
           </Suspense>
         </div>
@@ -117,22 +118,14 @@ export default async function RecommendPage({ searchParams }: PageProps) {
         {/* Popular Categories */}
         <div className="mb-6">
           <h2 className="text-sm font-medium text-slate-600 mb-3">Popular Categories</h2>
-          <Suspense fallback={<div className="h-10 bg-slate-200 rounded-full animate-pulse w-3/4" />}>
+          <Suspense fallback={<div className="h-10 bg-slate-200 rounded-full animate-shimmer w-3/4" />}>
             <PopularCategories categories={topCategories} />
           </Suspense>
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-          <Suspense
-            fallback={
-              <>
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-md h-40 sm:h-48 animate-pulse" />
-                ))}
-              </>
-            }
-          >
+          <Suspense fallback={<SkeletonGrid count={6} variant="recommend" />}>
             <RecommendationsGrid searchParams={searchParams} topCategories={topCategories} />
           </Suspense>
         </div>
