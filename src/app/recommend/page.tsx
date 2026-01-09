@@ -94,30 +94,30 @@ export default async function RecommendPage({ searchParams }: PageProps) {
   const topCategories = await getTopCategories(8);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <Navigation />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">EO Members Recommend</h1>
-          <p className="text-gray-600 text-sm sm:text-base">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">EO Members Recommend</h1>
+          <p className="text-slate-600 text-sm sm:text-base">
             Trusted businesses and services recommended by EO Malaysia members
           </p>
         </div>
 
         {/* Filters */}
         <div className="mb-6">
-          <Suspense fallback={<div className="h-24 sm:h-12 bg-gray-200 rounded-lg animate-pulse" />}>
+          <Suspense fallback={<div className="h-24 sm:h-12 bg-slate-200 rounded-lg animate-pulse" />}>
             <Filters searchParams={searchParams} />
           </Suspense>
         </div>
 
         {/* Popular Categories */}
         <div className="mb-6">
-          <h2 className="text-sm font-medium text-gray-600 mb-3">Popular Categories</h2>
-          <Suspense fallback={<div className="h-8 bg-gray-200 rounded-lg animate-pulse w-3/4" />}>
+          <h2 className="text-sm font-medium text-slate-600 mb-3">Popular Categories</h2>
+          <Suspense fallback={<div className="h-10 bg-slate-200 rounded-full animate-pulse w-3/4" />}>
             <PopularCategories categories={topCategories} />
           </Suspense>
         </div>

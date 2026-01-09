@@ -11,6 +11,8 @@ Started: Fri Jan  9 19:18:28 +08 2026
 - Badge color pattern: bg-{color}-100 text-{color}-700 with rounded-full (teal for recommends, blue for needs)
 - Card shadow pattern: shadow-md at rest, hover:shadow-lg with transition-shadow duration-200
 - Header/navigation component is at `src/components/Navigation.tsx` (not Header.tsx)
+- Premium search input pattern: h-[52px] sm:h-14, border-2 border-slate-200, rounded-xl, focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20
+- Category pills pattern: h-10 px-6 py-2 rounded-full, inactive: bg-white border-slate-200, active: bg-teal-600 border-teal-600
 
 ---
 
@@ -84,4 +86,34 @@ Started: Fri Jan  9 19:18:28 +08 2026
   - Search section now uses bg-white with border-b border-slate-200
   - Page background changed from bg-gray-50 to bg-slate-50 for consistency
   - Skeleton cards updated to rounded-2xl to match card styling
+---
+
+## 2026-01-09 - US-006
+- What was implemented: Search experience enhancement with premium Spotlight-like styling
+- Files changed: `src/components/HomeRecommendSearch.tsx`, `src/components/SearchBar.tsx`
+- **Learnings for future iterations:**
+  - Search components: HomeRecommendSearch.tsx (hero search) and SearchBar.tsx (needs filter search)
+  - Premium input pattern: h-[52px] sm:h-14, border-2, rounded-xl, pl-12 pr-12
+  - Focus ring glow: focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20
+  - Search icon on left (w-5 h-5 text-slate-400), clear X on right when value present
+  - Placeholder: "Search accountants, lawyers, IT services..." in slate-400
+  - Removed separate search button from HomeRecommendSearch - submit on Enter
+  - transition-all duration-200 for smooth focus transitions
+  - Container: w-full max-w-2xl mx-auto for consistent width constraint
+---
+
+## 2026-01-09 - US-007
+- What was implemented: Category pills polish with tactile, elegant styling
+- Files changed: `src/components/CategoryPills.tsx`, `src/app/recommend/page.tsx`
+- **Learnings for future iterations:**
+  - CategoryPills component is at `src/components/CategoryPills.tsx`
+  - Pill sizing: h-10 (40px), px-6 py-2, rounded-full for tactile feel
+  - Inactive state: bg-white border border-slate-200 text-slate-700
+  - Hover state: bg-teal-50 border-teal-200 (subtle teal tint)
+  - Active state: bg-teal-600 text-white border-teal-600
+  - Transitions: transition-all duration-200 ease-out for smooth state changes
+  - Horizontal scroll on mobile: overflow-x-auto with -mx-4 px-4 negative margin trick
+  - Use whitespace-nowrap on pills to prevent text wrapping during scroll
+  - Desktop uses flex-wrap, mobile uses single-row scrollable container
+  - Updated recommend page to use slate palette (slate-50, slate-200, slate-600, slate-900)
 ---

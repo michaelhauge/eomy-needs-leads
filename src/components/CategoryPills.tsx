@@ -26,23 +26,25 @@ export default function CategoryPills({ categories }: CategoryPillsProps) {
   if (categories.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-2">
-      {categories.map((cat) => {
-        const isActive = cat.slug === currentCategory;
-        return (
-          <button
-            key={cat.id}
-            onClick={() => handleCategoryClick(cat.slug)}
-            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              isActive
-                ? 'bg-teal-600 text-white'
-                : 'bg-teal-100 text-teal-700 hover:bg-teal-200'
-            }`}
-          >
-            {cat.name}
-          </button>
-        );
-      })}
+    <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div className="flex gap-2 pb-2 sm:pb-0 sm:flex-wrap">
+        {categories.map((cat) => {
+          const isActive = cat.slug === currentCategory;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryClick(cat.slug)}
+              className={`h-10 px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap border transition-all duration-200 ease-out ${
+                isActive
+                  ? 'bg-teal-600 text-white border-teal-600'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-teal-50 hover:border-teal-200'
+              }`}
+            >
+              {cat.name}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
