@@ -1,4 +1,11 @@
-import { sql } from '@vercel/postgres';
+/**
+ * Database Migration Script
+ * Creates tables and inserts categories for Supabase
+ *
+ * Run with: DATABASE_URL="your-connection-string" npm run db:migrate
+ */
+
+import postgres from 'postgres';
 
 const categories = [
   // Business Services (1-10)
@@ -69,68 +76,79 @@ const categories = [
 ];
 
 async function migrate() {
+  if (!process.env.DATABASE_URL) {
+    console.error('Error: DATABASE_URL environment variable is required');
+    process.exit(1);
+  }
+
+  const sql = postgres(process.env.DATABASE_URL);
+
   console.log('Starting database migration...');
 
-  // Create categories table
-  await sql`
-    CREATE TABLE IF NOT EXISTS categories (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) UNIQUE NOT NULL,
-      slug VARCHAR(100) UNIQUE NOT NULL
-    )
-  `;
-  console.log('Created categories table');
-
-  // Create members table
-  await sql`
-    CREATE TABLE IF NOT EXISTS members (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) UNIQUE NOT NULL,
-      leads_count INTEGER DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `;
-  console.log('Created members table');
-
-  // Create needs table
-  await sql`
-    CREATE TABLE IF NOT EXISTS needs (
-      id SERIAL PRIMARY KEY,
-      title VARCHAR(200) NOT NULL,
-      original_text TEXT,
-      category_id INTEGER REFERENCES categories(id),
-      date_of_need DATE NOT NULL,
-      status VARCHAR(20) DEFAULT 'Open',
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `;
-  console.log('Created needs table');
-
-  // Create leads table
-  await sql`
-    CREATE TABLE IF NOT EXISTS leads (
-      id SERIAL PRIMARY KEY,
-      need_id INTEGER REFERENCES needs(id) ON DELETE CASCADE,
-      contact_name VARCHAR(200),
-      contact_info TEXT,
-      provided_by_id INTEGER REFERENCES members(id),
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `;
-  console.log('Created leads table');
-
-  // Insert categories
-  console.log('Inserting categories...');
-  for (const category of categories) {
+  try {
+    // Create categories table
     await sql`
-      INSERT INTO categories (name, slug)
-      VALUES (${category.name}, ${category.slug})
-      ON CONFLICT (name) DO NOTHING
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) UNIQUE NOT NULL,
+        slug VARCHAR(100) UNIQUE NOT NULL
+      )
     `;
-  }
-  console.log(`Inserted ${categories.length} categories`);
+    console.log('Created categories table');
 
-  console.log('Migration complete!');
+    // Create members table
+    await sql`
+      CREATE TABLE IF NOT EXISTS members (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) UNIQUE NOT NULL,
+        leads_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+    console.log('Created members table');
+
+    // Create needs table
+    await sql`
+      CREATE TABLE IF NOT EXISTS needs (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(200) NOT NULL,
+        original_text TEXT,
+        category_id INTEGER REFERENCES categories(id),
+        date_of_need DATE NOT NULL,
+        status VARCHAR(20) DEFAULT 'Open',
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+    console.log('Created needs table');
+
+    // Create leads table
+    await sql`
+      CREATE TABLE IF NOT EXISTS leads (
+        id SERIAL PRIMARY KEY,
+        need_id INTEGER REFERENCES needs(id) ON DELETE CASCADE,
+        contact_name VARCHAR(200),
+        contact_info TEXT,
+        provided_by_id INTEGER REFERENCES members(id),
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+    console.log('Created leads table');
+
+    // Insert categories
+    console.log('Inserting categories...');
+    for (const category of categories) {
+      await sql`
+        INSERT INTO categories (name, slug)
+        VALUES (${category.name}, ${category.slug})
+        ON CONFLICT (name) DO NOTHING
+      `;
+    }
+    console.log(`Inserted ${categories.length} categories`);
+
+    console.log('Migration complete!');
+  } finally {
+    await sql.end();
+  }
 }
 
 migrate().catch(console.error);
