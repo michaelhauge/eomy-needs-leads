@@ -21,6 +21,9 @@ Started: Fri Jan  9 19:18:28 +08 2026
 - Button hover pattern: hover:bg-teal-700 hover:shadow-md (primary), hover:bg-slate-50 hover:shadow-md (secondary)
 - Button active pattern: active:bg-teal-800 active:scale-[0.98] with transition-all duration-150
 - Disabled button pattern: disabled:opacity-50 disabled:cursor-not-allowed
+- Skeleton pattern: Use SkeletonCard component from `src/components/SkeletonCard.tsx` with animate-shimmer class
+- Skeleton card sizing: min-h-[180px] sm:min-h-[200px], rounded-2xl to match actual cards
+- SkeletonGrid component for rendering multiple skeleton cards (default count: 6)
 
 ---
 
@@ -177,4 +180,65 @@ Started: Fri Jan  9 19:18:28 +08 2026
   - EmptyState.tsx gray colors migrated to slate palette
   - Text size is text-base (16px) with font-semibold for confident feel
   - Buttons feel like "confident handshakes" - solid, responsive, inviting
+---
+
+## 2026-01-09 - US-011
+- What was implemented: Empty state design with subtle SVG illustration and improved UX
+- Files changed: `src/components/EmptyState.tsx`
+- **Learnings for future iterations:**
+  - EmptyState component is at `src/components/EmptyState.tsx`
+  - SVG illustrations use Tailwind fill/stroke classes like fill-slate-100, stroke-slate-300
+  - Illustration size increased from w-16 h-16 to w-24 h-24 for better visual impact
+  - Question mark in magnifying glass guides users to search differently
+  - Always provide secondary action: "Clear filters" when filters active, "Browse all" when no filters
+  - Keep popular recommendations and category pills as fallback navigation options
+  - Empty states are guidance opportunities, not dead ends
+---
+
+## 2026-01-09 - US-012
+- What was implemented: Loading skeleton refinement with shimmer animation effect
+- Files changed: `src/components/SkeletonCard.tsx` (new), `src/app/globals.css`, `src/app/page.tsx`, `src/app/recommend/page.tsx`, `src/components/ReviewsSection.tsx`
+- **Learnings for future iterations:**
+  - Created reusable SkeletonCard component at `src/components/SkeletonCard.tsx`
+  - Shimmer animation uses CSS gradient with background-position animation (200% width)
+  - Animation defined in globals.css as `.animate-shimmer` with `@keyframes shimmer`
+  - Skeleton uses navy-tinted gradient: navy-200 → navy-100 → navy-200 (from CSS custom properties)
+  - SkeletonCard has `variant` prop: "recommend" | "need" for different layouts
+  - SkeletonGrid helper renders multiple skeleton cards with count prop (default 6)
+  - All skeleton shapes match actual card layout: badge, title (2 lines), rating/date, description, footer
+  - Use rounded-2xl (16px) to match actual card border-radius
+  - Card min-height: min-h-[180px] sm:min-h-[200px] matches actual cards
+  - Shimmer effect reduces perceived loading time compared to static animate-pulse
+---
+
+## 2026-01-09 - US-013
+- What was implemented: Business detail page polish with premium profile design
+- Files changed: `src/app/recommend/[id]/page.tsx`
+- **Learnings for future iterations:**
+  - Detail page is at `src/app/recommend/[id]/page.tsx`
+  - Hero area pattern: bg-gradient-to-b from-slate-50 to-white for subtle gradient
+  - Business name typography: text-3xl md:text-4xl font-bold text-slate-900
+  - Prominent rating display: StarRating with size="lg" + separate numeric value (text-xl font-semibold tabular-nums)
+  - Category badge pattern: inline-block bg-teal-100 text-teal-700 text-sm font-medium px-4 py-1.5 rounded-full
+  - About section uses max-w-3xl leading-relaxed for comfortable reading width
+  - Contact card pattern: bg-white shadow-md rounded-xl p-6 (unified contact info)
+  - CTA button pattern: Primary h-12 px-8 bg-teal-600 rounded-lg, Secondary h-12 px-8 bg-white border-slate-300
+  - Icon color in contact info: text-slate-400 (not teal) for subtle appearance
+  - Meta info uses bullet separator: `<span className="text-slate-300">•</span>`
+  - Detail pages build trust - premium feel comes from spacious layout and clear hierarchy
+---
+
+## 2026-01-09 - US-014
+- What was implemented: Reviews section enhancement with premium testimonial styling
+- Files changed: `src/components/ReviewsSection.tsx`, `src/components/ReviewCard.tsx`
+- **Learnings for future iterations:**
+  - Section header pattern: Title + inline StarRating + numeric average (tabular-nums) + review count
+  - Rating breakdown bars: bg-amber-400 on bg-slate-200, h-2.5 with rounded-full
+  - Review container: bg-slate-50 rounded-xl p-5 border border-slate-100
+  - Individual reviews: border border-slate-200 rounded-lg p-4 with hover:bg-slate-50
+  - Reviewer info inline pattern: name • StarRating • date (using bullet separator `<span className="text-slate-300">•</span>`)
+  - Review text: leading-relaxed max-w-2xl for comfortable reading
+  - Empty state: star SVG illustration + "Be the first to review" headline + personalized message with business name
+  - Empty state CTA: full h-12 primary button styling for prominent action
+  - Reviews are social proof - make them feel authentic with clear hierarchy
 ---

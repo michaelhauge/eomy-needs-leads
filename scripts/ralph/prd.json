@@ -191,7 +191,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "Empty states are opportunities to guide, not dead ends."
     },
     {
@@ -208,7 +208,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "Skeletons reduce perceived wait time significantly."
     },
     {
@@ -226,7 +226,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "Detail pages build trust. Make them feel premium."
     },
     {
@@ -244,7 +244,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "Reviews are social proof. Make them feel like real testimonials."
     },
     {
