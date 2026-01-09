@@ -188,9 +188,16 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
         </Link>
       </div>
 
-      {/* Results count */}
+      {/* Results count and search summary */}
       <div className="text-sm text-gray-600">
-        {filteredCount === totalCount ? (
+        {currentSearch ? (
+          <span>
+            {filteredCount} result{filteredCount !== 1 ? 's' : ''} for &ldquo;{currentSearch}&rdquo;
+            {filteredCount !== totalCount && (
+              <span className="text-gray-400"> (of {totalCount} total)</span>
+            )}
+          </span>
+        ) : filteredCount === totalCount ? (
           <span>Showing {totalCount} recommendation{totalCount !== 1 ? 's' : ''}</span>
         ) : (
           <span>Showing {filteredCount} of {totalCount} recommendation{totalCount !== 1 ? 's' : ''}</span>
