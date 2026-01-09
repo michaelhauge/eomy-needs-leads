@@ -176,7 +176,7 @@ export async function getRecommendations(options?: {
     LEFT JOIN categories c ON r.category_id = c.id
     WHERE 1=1
       ${categorySlug ? sql`AND c.slug = ${categorySlug}` : sql``}
-      ${search ? sql`AND (r.name ILIKE ${'%' + search + '%'} OR r.description ILIKE ${'%' + search + '%'})` : sql``}
+      ${search ? sql`AND (r.name ILIKE ${'%' + search + '%'} OR r.description ILIKE ${'%' + search + '%'} OR c.name ILIKE ${'%' + search + '%'})` : sql``}
     ORDER BY r.average_rating DESC, r.review_count DESC, r.created_at DESC
     LIMIT ${limit} OFFSET ${offset}
   `;
