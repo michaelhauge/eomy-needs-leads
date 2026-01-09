@@ -38,21 +38,21 @@ function formatRelativeTime(date: Date | string): string {
 
 export default function ReviewCard({ review }: ReviewCardProps) {
   return (
-    <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+    <div className="border border-slate-200 rounded-lg p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-medium text-gray-800">{review.reviewer_name}</span>
+            <span className="font-medium text-slate-900">{review.reviewer_name}</span>
             <StarRating rating={review.rating} size="sm" />
           </div>
-          <span className="text-xs text-gray-500 mt-0.5 block">
+          <span className="text-xs text-slate-500 mt-0.5 block">
             {formatRelativeTime(review.created_at)}
           </span>
         </div>
       </div>
 
       {review.review_text && (
-        <p className="mt-3 text-gray-700 text-sm whitespace-pre-wrap">
+        <p className="mt-3 text-slate-700 text-sm leading-relaxed whitespace-pre-wrap">
           {review.review_text}
         </p>
       )}

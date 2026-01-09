@@ -64,7 +64,7 @@ export default function StarRating({
               tabIndex={interactive ? 0 : -1}
             >
               <svg
-                className={`${sizeClasses[size]} ${isFilled ? 'text-yellow-400' : 'text-gray-300'}`}
+                className={`${sizeClasses[size]} ${isFilled ? 'text-amber-400' : 'text-slate-300'}`}
                 fill={isFullyFilled ? 'currentColor' : 'none'}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -93,13 +93,13 @@ export default function StarRating({
       </div>
 
       {showNumeric && (
-        <span className={`${textSizes[size]} font-medium text-gray-700 ml-1`}>
+        <span className={`${textSizes[size]} font-medium text-slate-700 ml-1`}>
           {rating.toFixed(1)}
         </span>
       )}
 
       {reviewCount !== undefined && (
-        <span className={`${textSizes[size]} text-gray-500 ml-1`}>
+        <span className={`${textSizes[size]} text-slate-500 ml-1`}>
           ({reviewCount} {reviewCount === 1 ? 'review' : 'reviews'})
         </span>
       )}
