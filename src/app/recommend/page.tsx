@@ -1,10 +1,11 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { getRecommendations, getCategoriesWithCounts, getTopCategories, SortOption } from '@/lib/db';
+import { getRecommendations, getCategoriesWithCounts, getTopCategories, SortOption, Category } from '@/lib/db';
 import RecommendCard from '@/components/RecommendCard';
 import RecommendFilters from '@/components/RecommendFilters';
 import CategoryPills from '@/components/CategoryPills';
 import Navigation from '@/components/Navigation';
+import EmptyState from '@/components/EmptyState';
 
 interface PageProps {
   searchParams: Promise<{
@@ -15,7 +16,13 @@ interface PageProps {
   }>;
 }
 
-async function RecommendationsGrid({ searchParams }: { searchParams: PageProps['searchParams'] }) {
+async function RecommendationsGrid({
+  searchParams,
+  topCategories
+}: {
+  searchParams: PageProps['searchParams'];
+  topCategories: Category[];
+}) {
   const params = await searchParams;
   const minRating = params.minRating ? parseInt(params.minRating, 10) : undefined;
   const sort = params.sort || 'rating';
@@ -27,18 +34,21 @@ async function RecommendationsGrid({ searchParams }: { searchParams: PageProps['
     limit: 100,
   });
 
+  const hasFilters = params.search || params.category || params.minRating;
+
   if (recommendations.length === 0) {
+    // Fetch popular recommendations to show as alternatives
+    const popularRecommendations = hasFilters
+      ? await getRecommendations({ sort: 'rating', limit: 3 })
+      : [];
+
     return (
-      <div className="col-span-full text-center py-12">
-        <p className="text-gray-500 text-lg">No recommendations found.</p>
-        <p className="text-gray-400 mt-2">Be the first to recommend a business!</p>
-        <Link
-          href="/recommend/new"
-          className="inline-block mt-4 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
-        >
-          Add Recommendation
-        </Link>
-      </div>
+      <EmptyState
+        searchTerm={params.search}
+        hasFilters={!!hasFilters}
+        popularRecommendations={popularRecommendations}
+        topCategories={topCategories}
+      />
     );
   }
 
@@ -75,12 +85,14 @@ async function Filters({ searchParams }: { searchParams: PageProps['searchParams
   return <RecommendFilters categories={categories} totalCount={totalCount} filteredCount={filteredCount} />;
 }
 
-async function PopularCategories() {
-  const topCategories = await getTopCategories(8);
-  return <CategoryPills categories={topCategories} />;
+async function PopularCategories({ categories }: { categories: Category[] }) {
+  return <CategoryPills categories={categories} />;
 }
 
 export default async function RecommendPage({ searchParams }: PageProps) {
+  // Fetch top categories once and pass to both PopularCategories and RecommendationsGrid
+  const topCategories = await getTopCategories(8);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
@@ -106,7 +118,7 @@ export default async function RecommendPage({ searchParams }: PageProps) {
         <div className="mb-6">
           <h2 className="text-sm font-medium text-gray-600 mb-3">Popular Categories</h2>
           <Suspense fallback={<div className="h-8 bg-gray-200 rounded-lg animate-pulse w-3/4" />}>
-            <PopularCategories />
+            <PopularCategories categories={topCategories} />
           </Suspense>
         </div>
 
@@ -121,7 +133,7 @@ export default async function RecommendPage({ searchParams }: PageProps) {
               </>
             }
           >
-            <RecommendationsGrid searchParams={searchParams} />
+            <RecommendationsGrid searchParams={searchParams} topCategories={topCategories} />
           </Suspense>
         </div>
       </main>
