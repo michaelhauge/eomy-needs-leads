@@ -5,6 +5,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryFilter from '@/components/CategoryFilter';
 import StatusFilter from '@/components/StatusFilter';
 import LeaderboardSidebar from '@/components/LeaderboardSidebar';
+import Navigation from '@/components/Navigation';
 
 interface PageProps {
   searchParams: Promise<{
@@ -49,12 +50,19 @@ async function Leaderboard() {
 async function Filters() {
   const categories = await getCategories();
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
-      <div className="flex-1">
-        <SearchBar />
+    <div className="flex flex-col gap-3">
+      {/* Search - always full width */}
+      <SearchBar />
+
+      {/* Dropdowns - stack on mobile, row on tablet+ */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 sm:flex-none">
+          <CategoryFilter categories={categories} />
+        </div>
+        <div className="flex-1 sm:flex-none">
+          <StatusFilter />
+        </div>
       </div>
-      <CategoryFilter categories={categories} />
-      <StatusFilter />
     </div>
   );
 }
@@ -62,33 +70,26 @@ async function Filters() {
 export default async function HomePage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold">EOMY Needs & Leads</h1>
-          <p className="text-blue-100 mt-1">EO Malaysia Member Directory</p>
-        </div>
-      </header>
+      <Navigation />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Main Column */}
-          <div className="flex-1">
-            {/* Filters */}
-            <div className="mb-6">
-              <Suspense fallback={<div className="h-12 bg-gray-200 rounded-lg animate-pulse" />}>
-                <Filters />
-              </Suspense>
-            </div>
+      <main className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        {/* Filters */}
+        <div className="mb-6">
+          <Suspense fallback={<div className="h-24 sm:h-12 bg-gray-200 rounded-lg animate-pulse" />}>
+            <Filters />
+          </Suspense>
+        </div>
 
-            {/* Gallery Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Main Column - Needs Grid */}
+          <div className="flex-1 order-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
               <Suspense
                 fallback={
                   <>
                     {[...Array(6)].map((_, i) => (
-                      <div key={i} className="bg-white rounded-xl shadow-md h-48 animate-pulse" />
+                      <div key={i} className="bg-white rounded-xl shadow-md h-40 sm:h-48 animate-pulse" />
                     ))}
                   </>
                 }
@@ -98,8 +99,8 @@ export default async function HomePage({ searchParams }: PageProps) {
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:w-80">
+          {/* Sidebar - Leaderboard (below on mobile, side on desktop) */}
+          <div className="lg:w-80 order-2">
             <Suspense
               fallback={
                 <div className="bg-white rounded-xl shadow-md p-6 h-64 animate-pulse" />
