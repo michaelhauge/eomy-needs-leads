@@ -1,0 +1,159 @@
+{
+  "project": "EOMY Recommendations Search",
+  "branchName": "ralph/quick-search",
+  "description": "Enable EO Malaysia members to find trusted recommendations within 30 seconds through quick search and filtering, eliminating the need to wait 24 hours for chat responses.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Add search bar to recommendations page",
+      "description": "As an EO member, I want to search recommendations by keyword so I can quickly find what I need without scrolling through all listings.",
+      "acceptanceCriteria": [
+        "Search bar prominently displayed at top of /recommend page",
+        "Search filters recommendations by name, description, and category name",
+        "Search is case-insensitive",
+        "Results update as user types (debounced 300ms)",
+        "Show 'No results found' message when search has no matches",
+        "Clear button (X) to reset search",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "This is the core feature - members need to search 'lawyer' or 'pest control' and instantly see results"
+    },
+    {
+      "id": "US-002",
+      "title": "Add category filter dropdown",
+      "description": "As an EO member, I want to filter recommendations by category so I can narrow down to relevant business types.",
+      "acceptanceCriteria": [
+        "Dropdown showing all categories with recommendation counts",
+        "Filter works in combination with search",
+        "URL updates with filter params (?category=legal-services)",
+        "Selected category is visually highlighted",
+        "Option to clear filter and show all",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Categories already exist in database, just need UI filter"
+    },
+    {
+      "id": "US-003",
+      "title": "Add rating filter",
+      "description": "As an EO member, I want to filter by minimum rating so I can see only highly-rated recommendations.",
+      "acceptanceCriteria": [
+        "Filter options: All ratings, 4+ stars, 3+ stars",
+        "Works in combination with search and category filter",
+        "Shows count of matching results",
+        "URL updates with rating param (?minRating=4)",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Add sort options",
+      "description": "As an EO member, I want to sort recommendations so I can see the most relevant ones first.",
+      "acceptanceCriteria": [
+        "Sort options: Highest rated, Most reviewed, Newest, A-Z",
+        "Default sort is 'Highest rated'",
+        "Sort persists in URL param (?sort=rating)",
+        "Sort dropdown styled consistently with other filters",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Add quick-action buttons to recommendation cards",
+      "description": "As an EO member, I want to call or visit a business website directly from the card so I can act immediately without opening the detail page.",
+      "acceptanceCriteria": [
+        "Phone icon button that opens tel: link (if contact_info contains phone)",
+        "Globe icon button that opens website in new tab (if website_url exists)",
+        "Buttons appear on hover (desktop) or always visible (mobile)",
+        "Buttons don't interfere with card click to detail page",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Extract phone number from contact_info field using regex"
+    },
+    {
+      "id": "US-006",
+      "title": "Show result count and search summary",
+      "description": "As an EO member, I want to see how many results match my search so I know if I need to refine my criteria.",
+      "acceptanceCriteria": [
+        "Display 'Showing X recommendations' or 'Showing X of Y recommendations' when filtered",
+        "When searching, show 'X results for [search term]'",
+        "Message updates dynamically as filters change",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Add recommendations quick-access to homepage",
+      "description": "As an EO member, I want to access recommendations from the homepage so I don't have to navigate through menus.",
+      "acceptanceCriteria": [
+        "Add 'Find Trusted Resources' section on homepage below hero",
+        "Show search bar that redirects to /recommend with search query",
+        "Display 3-4 top-rated recommendations as preview cards",
+        "'View All Recommendations' button links to /recommend",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "Homepage is at src/app/page.tsx"
+    },
+    {
+      "id": "US-008",
+      "title": "Add popular categories quick links",
+      "description": "As an EO member, I want to quickly jump to popular categories so I can browse common needs.",
+      "acceptanceCriteria": [
+        "Display clickable category pills/badges above the grid",
+        "Show top 8 categories that have the most recommendations",
+        "Clicking a category applies that filter",
+        "Active category is visually highlighted",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "Could use teal badges similar to the card headers"
+    },
+    {
+      "id": "US-009",
+      "title": "Improve mobile search experience",
+      "description": "As an EO member on mobile, I want the search and filters to be easy to use on a small screen.",
+      "acceptanceCriteria": [
+        "Search bar is full-width on mobile",
+        "Filters collapse into a 'Filters' button that opens a bottom sheet or modal",
+        "Filter selections show as pills below search bar",
+        "Touch targets are at least 44px",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 9,
+      "passes": true,
+      "notes": "Most EO members will access on mobile"
+    },
+    {
+      "id": "US-010",
+      "title": "Add empty state with suggestions",
+      "description": "As an EO member, I want helpful suggestions when no results are found so I can try alternative searches.",
+      "acceptanceCriteria": [
+        "Friendly message when no results match filters",
+        "Suggest clearing filters or trying different search terms",
+        "Show 'Browse all categories' link",
+        "Display a few popular recommendations as alternatives",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 10,
+      "passes": true,
+      "notes": ""
+    }
+  ]
+}

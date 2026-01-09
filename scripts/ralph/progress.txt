@@ -1,0 +1,185 @@
+# Ralph Progress Log
+Started: Fri Jan  9 18:32:58 +08 2026
+---
+
+## Codebase Patterns
+- Search uses URL params (?search=, ?category=) for state - this allows bookmarking and sharing filtered results
+- Use `sql<Type[]>` template for database queries with postgres library
+- Category filtering uses `slug` field, not `id`
+- The codebase uses controlled inputs with React state for form fields that need real-time updates
+- Components that access URL state should sync local state with useEffect when URL changes (for browser back/forward)
+- Mobile-first responsive: use `sm:hidden` to hide on desktop, `hidden sm:flex` to show only on desktop
+- Bottom sheet pattern: fixed modal with backdrop, prevent body scroll with `document.body.style.overflow = 'hidden'`
+---
+
+## 2026-01-09 - US-001
+- What was implemented:
+  - Real-time search with 300ms debounce (replaces form submit)
+  - Search now includes category name in addition to name and description
+  - Clear (X) button appears when search has value
+  - Controlled input syncs with URL state
+- Files changed:
+  - src/components/RecommendFilters.tsx - converted to controlled input with debounce
+  - src/lib/db.ts - added category name to search ILIKE clause
+- **Learnings for future iterations:**
+  - RecommendFilters is a 'use client' component that manages search/filter state
+  - The page.tsx passes searchParams to server component which queries DB
+  - URL params are the source of truth; local state must sync on URL changes
+  - Debounce pattern: setTimeout in useEffect, cleanup with clearTimeout
+---
+
+## 2026-01-09 - US-002
+- What was implemented:
+  - Category dropdown now shows recommendation counts (e.g., "Legal Services (5)")
+  - Added getCategoriesWithCounts() function in db.ts using LEFT JOIN with COUNT
+  - Selected category has visual highlighting (teal border, bg, and text color)
+  - HAVING COUNT(r.id) > 0 filters out categories with no recommendations
+- Files changed:
+  - src/lib/db.ts - added getCategoriesWithCounts() function, added recommendation_count to Category type
+  - src/app/recommend/page.tsx - switched to use getCategoriesWithCounts()
+  - src/components/RecommendFilters.tsx - display counts in dropdown, add dynamic styling for selected state
+- **Learnings for future iterations:**
+  - Category type already existed; add optional fields for extended data (recommendation_count?)
+  - HAVING clause is useful to filter out empty categories (better UX than showing "(0)")
+  - Tailwind dynamic classes: use template string with ternary for conditional styling
+---
+
+## 2026-01-09 - US-003
+- What was implemented:
+  - Rating filter dropdown with options: All Ratings, 4+ Stars, 3+ Stars
+  - Added minRating parameter to getRecommendations() function in db.ts
+  - URL updates with ?minRating=4 or ?minRating=3
+  - Selected rating filter has teal visual highlighting (same as category dropdown)
+  - Added results count display: "Showing X recommendations" or "Showing X of Y recommendations"
+- Files changed:
+  - src/lib/db.ts - added minRating parameter to getRecommendations()
+  - src/app/recommend/page.tsx - parse minRating from searchParams, pass counts to Filters component
+  - src/components/RecommendFilters.tsx - added rating dropdown, handleRatingChange, results count display
+- **Learnings for future iterations:**
+  - RecommendFiltersProps interface needs totalCount and filteredCount for results display
+  - The Filters async component needs searchParams passed to it to calculate counts
+  - For displaying counts, fetch recommendations twice: once with no filters (total) and once with filters (filtered)
+  - Rating values are strings in URL params, parse with parseInt() before passing to db function
+---
+
+## 2026-01-09 - US-004
+- What was implemented:
+  - Sort dropdown with options: Highest Rated, Most Reviewed, Newest, A-Z
+  - Default sort is 'rating' (Highest Rated) - doesn't appear in URL when default
+  - Added SortOption type and sort parameter to getRecommendations() in db.ts
+  - Dynamic ORDER BY clause built based on sort option
+  - Sort dropdown has teal highlighting when non-default sort is selected
+- Files changed:
+  - src/lib/db.ts - added SortOption type, added sort parameter to getRecommendations(), dynamic ORDER BY
+  - src/app/recommend/page.tsx - parse sort from searchParams, pass to database queries
+  - src/components/RecommendFilters.tsx - added sort dropdown, handleSortChange function
+- **Learnings for future iterations:**
+  - Use sql template tags for dynamic ORDER BY clauses (sql`ORDER BY ...`)
+  - Default values don't need to be in URL (cleaner URLs) - only add param when value differs from default
+  - SortOption type exported from db.ts for type safety across components
+---
+
+## 2026-01-09 - US-005
+- What was implemented:
+  - Phone icon button opens tel: link when contact_info contains a phone number
+  - Globe icon button opens website in new tab when website_url exists
+  - Buttons appear always on mobile (opacity-100) and only on hover on desktop (sm:opacity-0 sm:group-hover:opacity-100)
+  - onClick with stopPropagation() prevents buttons from triggering card navigation
+  - extractPhoneNumber() regex function extracts phone numbers from contact_info field
+- Files changed:
+  - src/components/RecommendCard.tsx - added PhoneIcon/GlobeIcon SVGs, extractPhoneNumber function, quick action buttons
+- **Learnings for future iterations:**
+  - Use `group` on parent Link and `group-hover:` on children for hover effects within Link components
+  - Use `stopPropagation()` on nested interactive elements inside Links to prevent navigation
+  - Phone regex pattern: `/(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}/` handles Malaysian phone formats
+  - Tailwind responsive: use `opacity-100 sm:opacity-0 sm:group-hover:opacity-100` for always-visible-on-mobile, hover-on-desktop pattern
+---
+
+## 2026-01-09 - US-006
+- What was implemented:
+  - Enhanced results count to show search term when searching: "X results for '[search term]'"
+  - Conditional display of "(of Y total)" when results are filtered by search
+  - Previously existing "Showing X recommendations" and "Showing X of Y recommendations" for non-search filters
+  - Message updates dynamically as user types (due to existing debounced search)
+- Files changed:
+  - src/components/RecommendFilters.tsx - updated results count display to use conditional rendering based on currentSearch
+- **Learnings for future iterations:**
+  - Use `&ldquo;` and `&rdquo;` for typographically correct quotes in JSX
+  - Ternary chains in JSX: `{condition1 ? <A/> : condition2 ? <B/> : <C/>}` pattern
+  - currentSearch from searchParams is already available in the component, no new props needed
+---
+
+## 2026-01-09 - US-007
+- What was implemented:
+  - Added "Find Trusted Resources" section to homepage below Navigation
+  - HomeRecommendSearch client component with search bar that redirects to /recommend?search=...
+  - TopRecommendations async server component fetching top 4 rated recommendations
+  - Preview cards using existing RecommendCard component in 4-column grid (responsive)
+  - "View All Recommendations" button with arrow icon linking to /recommend
+  - Section styled with teal gradient background matching design system
+- Files changed:
+  - src/app/page.tsx - added imports, TopRecommendations component, Find Trusted Resources section
+  - src/components/HomeRecommendSearch.tsx - new client component for homepage search redirect
+- **Learnings for future iterations:**
+  - Homepage page.tsx uses Suspense boundaries for async components
+  - Form submit with router.push() for search redirect pattern works well for cross-page search
+  - getRecommendations({ limit: 4, sort: 'rating' }) fetches top-rated items directly
+  - Can reuse RecommendCard component across different pages
+---
+
+## 2026-01-09 - US-008
+- What was implemented:
+  - CategoryPills client component with clickable teal badges
+  - getTopCategories() function in db.ts that fetches top 8 categories by recommendation count
+  - PopularCategories async server component renders the pills above the grid
+  - Clicking a pill applies category filter via URL params
+  - Clicking active pill clears the filter (toggle behavior)
+  - Active category pill has solid teal background (bg-teal-600 text-white)
+- Files changed:
+  - src/lib/db.ts - added getTopCategories() function with ORDER BY count DESC
+  - src/components/CategoryPills.tsx - new client component for category pill buttons
+  - src/app/recommend/page.tsx - added PopularCategories component, imported getTopCategories
+- **Learnings for future iterations:**
+  - Similar patterns: getTopCategories follows same pattern as getCategoriesWithCounts but with different ORDER BY
+  - Click-to-toggle pattern: check if current === slug, then delete param, else set param
+  - Pill styling: teal-100 bg with teal-700 text for inactive, teal-600 bg with white text for active
+  - The recommend page uses async server components for data fetching with Suspense boundaries
+---
+
+## 2026-01-09 - US-009
+- What was implemented:
+  - Mobile "Filters" button that opens a bottom sheet modal
+  - Active filter pills below search bar (tap to remove filter)
+  - Badge on filter button showing count of active filters
+  - Bottom sheet with slide-up animation and backdrop
+  - All touch targets min-h-[44px] and min-w-[44px] for accessibility
+  - Separate mobile Add button (full width below filter pills)
+  - Desktop layout unchanged (inline dropdowns)
+- Files changed:
+  - src/components/RecommendFilters.tsx - added mobile filter button, pills, bottom sheet modal
+  - src/app/globals.css - added @keyframes slide-up animation
+- **Learnings for future iterations:**
+  - Use `sm:hidden` for mobile-only and `hidden sm:flex` for desktop-only elements
+  - Prevent body scroll when modal open: `document.body.style.overflow = 'hidden'` in useEffect
+  - Custom animation: define @keyframes in globals.css, use with `.animate-slide-up` class
+  - Filter pill pattern: teal-100 bg with teal-700 text, tap to remove with X icon
+  - Active filter count: calculate from URL params, show as badge on filter button
+---
+
+## 2026-01-09 - US-010
+- What was implemented:
+  - EmptyState component with friendly message when no results match filters
+  - Contextual messaging based on whether user has search term or filters applied
+  - "Clear all filters" button when filters are applied
+  - "Browse all categories" section showing top categories as clickable pills
+  - Popular recommendations section showing top 3 rated recommendations as alternatives
+  - Reuses RecommendCard component for consistent card display
+- Files changed:
+  - src/components/EmptyState.tsx - new component for empty state UI
+  - src/app/recommend/page.tsx - imports EmptyState, passes topCategories to RecommendationsGrid, conditional fetching of popular recommendations
+- **Learnings for future iterations:**
+  - Pass shared data (topCategories) from parent page to avoid duplicate fetches in child components
+  - Conditional data fetching: only fetch popular recommendations when there are filters applied (hasFilters)
+  - Use Unicode escape sequences for special characters in JSX strings (e.g., `\u2019` for curly apostrophe)
+  - Server components can conditionally fetch data based on params before rendering child components
+---
