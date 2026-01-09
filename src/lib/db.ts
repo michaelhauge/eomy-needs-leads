@@ -169,16 +169,29 @@ export async function searchNeeds(query: string): Promise<Need[]> {
   return getNeeds({ search: query, limit: 50 });
 }
 
+// Sort options type
+export type SortOption = 'rating' | 'reviews' | 'newest' | 'name';
+
 // Recommendations functions
 export async function getRecommendations(options?: {
   categorySlug?: string;
   search?: string;
   minRating?: number;
+  sort?: SortOption;
   limit?: number;
   offset?: number;
 }): Promise<Recommendation[]> {
   if (!sql) return [];
-  const { categorySlug, search, minRating, limit = 50, offset = 0 } = options || {};
+  const { categorySlug, search, minRating, sort = 'rating', limit = 50, offset = 0 } = options || {};
+
+  // Build ORDER BY clause based on sort option
+  const orderByClause = sort === 'rating'
+    ? sql`ORDER BY r.average_rating DESC, r.review_count DESC, r.created_at DESC`
+    : sort === 'reviews'
+    ? sql`ORDER BY r.review_count DESC, r.average_rating DESC, r.created_at DESC`
+    : sort === 'newest'
+    ? sql`ORDER BY r.created_at DESC, r.average_rating DESC`
+    : sql`ORDER BY r.name ASC, r.average_rating DESC`; // sort === 'name' (A-Z)
 
   const rows = await sql<Recommendation[]>`
     SELECT
@@ -195,7 +208,7 @@ export async function getRecommendations(options?: {
       ${categorySlug ? sql`AND c.slug = ${categorySlug}` : sql``}
       ${search ? sql`AND (r.name ILIKE ${'%' + search + '%'} OR r.description ILIKE ${'%' + search + '%'} OR c.name ILIKE ${'%' + search + '%'})` : sql``}
       ${minRating ? sql`AND COALESCE(r.average_rating, 0) >= ${minRating}` : sql``}
-    ORDER BY r.average_rating DESC, r.review_count DESC, r.created_at DESC
+    ${orderByClause}
     LIMIT ${limit} OFFSET ${offset}
   `;
 
