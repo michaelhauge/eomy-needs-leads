@@ -1,159 +1,288 @@
 {
-  "project": "EOMY Recommendations Search",
-  "branchName": "ralph/quick-search",
-  "description": "Enable EO Malaysia members to find trusted recommendations within 30 seconds through quick search and filtering, eliminating the need to wait 24 hours for chat responses.",
+  "project": "EOMY Premium UX/UI Redesign",
+  "branchName": "ralph/premium-ux-redesign",
+  "description": "Transform EOMY from functional to delightful - applying Steve Jobs/Jony Ive design philosophy with Stripe/Mercury sophistication. Navy trust palette, Inter typography, 8px grid, subtle shadows, and micro-interactions.",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Add search bar to recommendations page",
-      "description": "As an EO member, I want to search recommendations by keyword so I can quickly find what I need without scrolling through all listings.",
+      "title": "Design Token System",
+      "description": "As a developer, I want a centralized design token system in Tailwind so that all components share consistent visual language.",
       "acceptanceCriteria": [
-        "Search bar prominently displayed at top of /recommend page",
-        "Search filters recommendations by name, description, and category name",
-        "Search is case-insensitive",
-        "Results update as user types (debounced 300ms)",
-        "Show 'No results found' message when search has no matches",
-        "Clear button (X) to reset search",
+        "Create tailwind.config.ts with extended theme",
+        "Define color palette: slate-900 navy, teal-600 accent, amber-400 ratings",
+        "Define custom shadows: sm, md, lg, xl with navy-tinted rgba",
+        "Update globals.css with CSS custom properties",
+        "All existing components compile without errors",
         "Typecheck passes: npm run build"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "This is the core feature - members need to search 'lawyer' or 'pest control' and instantly see results"
+      "notes": "Foundation story - must come first. Use slate color palette for navy tones."
     },
     {
       "id": "US-002",
-      "title": "Add category filter dropdown",
-      "description": "As an EO member, I want to filter recommendations by category so I can narrow down to relevant business types.",
+      "title": "Typography Refinement with Inter",
+      "description": "As a user, I want typography that is clear, scannable, and feels premium.",
       "acceptanceCriteria": [
-        "Dropdown showing all categories with recommendation counts",
-        "Filter works in combination with search",
-        "URL updates with filter params (?category=legal-services)",
-        "Selected category is visually highlighted",
-        "Option to clear filter and show all",
+        "Add Inter font via next/font/google with variable weights",
+        "Apply Display (48px/700), H1 (36px/700), H2 (28px/600), H3 (22px/600)",
+        "Body text: 16px base with 1.5 line-height",
+        "Labels use 12px with tracking-wide",
+        "Numbers use tabular-nums for alignment",
         "Typecheck passes: npm run build"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Categories already exist in database, just need UI filter"
+      "notes": "Inter from Google Fonts. Use negative letter-spacing for headlines."
     },
     {
       "id": "US-003",
-      "title": "Add rating filter",
-      "description": "As an EO member, I want to filter by minimum rating so I can see only highly-rated recommendations.",
+      "title": "Card Component Redesign",
+      "description": "As a member browsing recommendations, I want cards that communicate quality and trust at a glance.",
       "acceptanceCriteria": [
-        "Filter options: All ratings, 4+ stars, 3+ stars",
-        "Works in combination with search and category filter",
-        "Shows count of matching results",
-        "URL updates with rating param (?minRating=4)",
+        "Border-radius: 16px (rounded-2xl)",
+        "Shadow at rest: shadow-md, hover: shadow-lg with 200ms transition",
+        "Content padding: 24px desktop, 20px mobile",
+        "Business name: 18px/600, 2-line clamp with line-clamp-2",
+        "Category badge: rounded-full, teal-100/teal-700 for recommends",
+        "Star rating uses amber-400 fill color",
+        "Active state: active:scale-[0.98] on press",
         "Typecheck passes: npm run build"
       ],
       "priority": 3,
-      "passes": true,
-      "notes": ""
+      "passes": false,
+      "notes": "Apply to both RecommendCard and NeedCard. NeedCard uses blue-100/blue-700 badges."
     },
     {
       "id": "US-004",
-      "title": "Add sort options",
-      "description": "As an EO member, I want to sort recommendations so I can see the most relevant ones first.",
+      "title": "Navigation Header Simplification",
+      "description": "As a member, I want navigation that's always available but never intrusive.",
       "acceptanceCriteria": [
-        "Sort options: Highest rated, Most reviewed, Newest, A-Z",
-        "Default sort is 'Highest rated'",
-        "Sort persists in URL param (?sort=rating)",
-        "Sort dropdown styled consistently with other filters",
+        "Header height: 64px desktop (h-16), 56px mobile (h-14)",
+        "Background: white with shadow-sm (no gradient)",
+        "Logo: 'EOMY Directory' in font-semibold text-slate-900",
+        "Nav tabs as text links, active has teal-600 with border-b-2",
+        "Sticky positioning (sticky top-0 z-50)",
+        "Clean minimal design - remove any gradient backgrounds",
         "Typecheck passes: npm run build"
       ],
       "priority": 4,
-      "passes": true,
-      "notes": ""
+      "passes": false,
+      "notes": "Simplify - less is more. The content is the hero, not the nav."
     },
     {
       "id": "US-005",
-      "title": "Add quick-action buttons to recommendation cards",
-      "description": "As an EO member, I want to call or visit a business website directly from the card so I can act immediately without opening the detail page.",
+      "title": "Hero Section Redesign",
+      "description": "As a member landing on homepage, I want to immediately understand value with a dramatic welcome.",
       "acceptanceCriteria": [
-        "Phone icon button that opens tel: link (if contact_info contains phone)",
-        "Globe icon button that opens website in new tab (if website_url exists)",
-        "Buttons appear on hover (desktop) or always visible (mobile)",
-        "Buttons don't interfere with card click to detail page",
+        "Full-width hero with bg-gradient-to-b from-slate-900 to-slate-800",
+        "Centered content, max-w-3xl mx-auto",
+        "Heading: 'Find What You Need. Share What You Know.' text-4xl md:text-5xl font-bold text-white",
+        "Subheading: 'Trusted resources from EO Malaysia members' text-lg text-slate-300",
+        "Hero height: min-h-[40vh] on desktop, min-h-[30vh] on mobile",
+        "Clean minimal - remove busy sections from hero area",
         "Typecheck passes: npm run build"
       ],
       "priority": 5,
-      "passes": true,
-      "notes": "Extract phone number from contact_info field using regex"
+      "passes": false,
+      "notes": "Jobs keynote style - one big idea per screen. Dramatic dark background."
     },
     {
       "id": "US-006",
-      "title": "Show result count and search summary",
-      "description": "As an EO member, I want to see how many results match my search so I know if I need to refine my criteria.",
+      "title": "Search Experience Enhancement",
+      "description": "As a member searching, I want search to feel instant and magical like Mac Spotlight.",
       "acceptanceCriteria": [
-        "Display 'Showing X recommendations' or 'Showing X of Y recommendations' when filtered",
-        "When searching, show 'X results for [search term]'",
-        "Message updates dynamically as filters change",
+        "Search input: w-full max-w-2xl mx-auto",
+        "Height: h-14 (56px) desktop, h-13 (52px) mobile",
+        "Border: border-2 border-slate-200, focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20",
+        "Background white with rounded-xl",
+        "Search icon (w-5 h-5) on left in slate-400",
+        "Clear X button appears when input has value",
+        "Placeholder: 'Search accountants, lawyers, IT services...' in slate-400",
         "Typecheck passes: npm run build"
       ],
       "priority": 6,
-      "passes": true,
-      "notes": ""
+      "passes": false,
+      "notes": "Make search the magnetic center. Focus state with ring glow."
     },
     {
       "id": "US-007",
-      "title": "Add recommendations quick-access to homepage",
-      "description": "As an EO member, I want to access recommendations from the homepage so I don't have to navigate through menus.",
+      "title": "Category Pills Polish",
+      "description": "As a member exploring, I want category pills that feel tactile and elegant.",
       "acceptanceCriteria": [
-        "Add 'Find Trusted Resources' section on homepage below hero",
-        "Show search bar that redirects to /recommend with search query",
-        "Display 3-4 top-rated recommendations as preview cards",
-        "'View All Recommendations' button links to /recommend",
+        "Pills: h-10 (40px), px-6 py-2, rounded-full",
+        "Inactive: bg-white border border-slate-200 text-slate-700",
+        "Hover: bg-teal-50 border-teal-200",
+        "Active: bg-teal-600 text-white border-teal-600",
+        "All transitions: transition-all duration-200 ease-out",
+        "Horizontal scroll container with overflow-x-auto",
         "Typecheck passes: npm run build"
       ],
       "priority": 7,
-      "passes": true,
-      "notes": "Homepage is at src/app/page.tsx"
+      "passes": false,
+      "notes": "Pills should feel like physical buttons you want to press."
     },
     {
       "id": "US-008",
-      "title": "Add popular categories quick links",
-      "description": "As an EO member, I want to quickly jump to popular categories so I can browse common needs.",
+      "title": "Filter UI Elegance",
+      "description": "As a member refining results, I want filters that are discoverable but unobtrusive.",
       "acceptanceCriteria": [
-        "Display clickable category pills/badges above the grid",
-        "Show top 8 categories that have the most recommendations",
-        "Clicking a category applies that filter",
-        "Active category is visually highlighted",
+        "Desktop: horizontal flex row with gap-3",
+        "Filter buttons: h-10 rounded-full border border-slate-200",
+        "Active filter: bg-teal-100 text-teal-700 border-teal-300",
+        "Active shows value not label (e.g., 'Legal' not 'Category')",
+        "Dropdown: shadow-lg rounded-lg bg-white",
+        "Options: h-11 (44px) with hover:bg-slate-50",
+        "Selected option has check icon in teal-600",
         "Typecheck passes: npm run build"
       ],
       "priority": 8,
-      "passes": true,
-      "notes": "Could use teal badges similar to the card headers"
+      "passes": false,
+      "notes": "Filters are tools, not obstacles. Show active state clearly."
     },
     {
       "id": "US-009",
-      "title": "Improve mobile search experience",
-      "description": "As an EO member on mobile, I want the search and filters to be easy to use on a small screen.",
+      "title": "Form Field Styling",
+      "description": "As a member filling forms, I want inputs that feel modern and spacious.",
       "acceptanceCriteria": [
-        "Search bar is full-width on mobile",
-        "Filters collapse into a 'Filters' button that opens a bottom sheet or modal",
-        "Filter selections show as pills below search bar",
-        "Touch targets are at least 44px",
+        "Input height: h-13 (52px) for touch-friendly targets",
+        "Border: border-[1.5px] border-slate-200 rounded-lg",
+        "Focus: focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20",
+        "Error: border-red-400 ring-red-400/20",
+        "Labels: text-sm font-medium text-slate-700 mb-2",
+        "Placeholder: text-slate-400",
+        "Textarea: same styling with min-h-[120px]",
         "Typecheck passes: npm run build"
       ],
       "priority": 9,
-      "passes": true,
-      "notes": "Most EO members will access on mobile"
+      "passes": false,
+      "notes": "Apply to recommend/new form and ReviewForm component."
     },
     {
       "id": "US-010",
-      "title": "Add empty state with suggestions",
-      "description": "As an EO member, I want helpful suggestions when no results are found so I can try alternative searches.",
+      "title": "Button System",
+      "description": "As a member clicking buttons, I want them to feel confident and inviting.",
       "acceptanceCriteria": [
-        "Friendly message when no results match filters",
-        "Suggest clearing filters or trying different search terms",
-        "Show 'Browse all categories' link",
-        "Display a few popular recommendations as alternatives",
+        "Primary: bg-teal-600 text-white h-12 (48px) rounded-lg px-8 font-semibold",
+        "Hover: hover:bg-teal-700 hover:shadow-md",
+        "Active: active:bg-teal-800 active:scale-[0.98]",
+        "Secondary: bg-white border border-slate-300 text-slate-700",
+        "Disabled: opacity-50 cursor-not-allowed",
+        "All buttons text-base font-semibold",
+        "Transitions: transition-all duration-150",
         "Typecheck passes: npm run build"
       ],
       "priority": 10,
-      "passes": true,
-      "notes": ""
+      "passes": false,
+      "notes": "Buttons are commitments. Make them feel like confident handshakes."
+    },
+    {
+      "id": "US-011",
+      "title": "Empty State Design",
+      "description": "As a member seeing no results, I want helpful guidance not frustration.",
+      "acceptanceCriteria": [
+        "Centered layout with text-center",
+        "Add subtle SVG illustration or icon (search with magnifying glass)",
+        "Headline: text-xl font-semibold text-slate-900",
+        "Supportive text: text-base text-slate-600 max-w-md mx-auto",
+        "Primary CTA button prominent (bg-teal-600)",
+        "Secondary link for 'Clear filters' or 'Browse all'",
+        "Keep popular recommendations section as alternatives",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 11,
+      "passes": false,
+      "notes": "Empty states are opportunities to guide, not dead ends."
+    },
+    {
+      "id": "US-012",
+      "title": "Loading Skeleton Refinement",
+      "description": "As a member waiting for content, I want loading to feel fast.",
+      "acceptanceCriteria": [
+        "Skeleton color: bg-slate-200 with animate-pulse",
+        "Add shimmer effect with gradient animation if possible",
+        "Skeleton shapes match actual card layout (title, description, badge areas)",
+        "Card skeleton height matches actual card (~220px)",
+        "Use 6 skeleton cards as default",
+        "Skeleton border-radius matches cards (rounded-2xl)",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 12,
+      "passes": false,
+      "notes": "Skeletons reduce perceived wait time significantly."
+    },
+    {
+      "id": "US-013",
+      "title": "Business Detail Page Polish",
+      "description": "As a member viewing a recommendation, I want it to feel like a premium profile.",
+      "acceptanceCriteria": [
+        "Hero area with bg-gradient-to-b from-slate-50 to-white",
+        "Business name: text-3xl md:text-4xl font-bold text-slate-900",
+        "Star rating prominent with numeric value (text-xl font-semibold)",
+        "About section: max-w-3xl leading-relaxed (line-height 1.75)",
+        "Contact card: bg-white shadow-md rounded-xl p-6",
+        "CTA: 'Visit Website' as primary teal button, 'Call' as secondary outline",
+        "Buttons: h-12 rounded-lg",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 13,
+      "passes": false,
+      "notes": "Detail pages build trust. Make them feel premium."
+    },
+    {
+      "id": "US-014",
+      "title": "Reviews Section Enhancement",
+      "description": "As a member reading reviews, I want them to feel authentic and trustworthy.",
+      "acceptanceCriteria": [
+        "Section heading with review count and average rating",
+        "Rating breakdown: horizontal bars with bg-amber-400 on bg-slate-200",
+        "Each bar shows percentage width based on count",
+        "Individual reviews: border border-slate-200 rounded-lg p-4",
+        "Reviewer name and date inline with stars",
+        "Review text: leading-relaxed max-w-2xl",
+        "Empty state: encouraging 'Be the first to review' message",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 14,
+      "passes": false,
+      "notes": "Reviews are social proof. Make them feel like real testimonials."
+    },
+    {
+      "id": "US-015",
+      "title": "Mobile Bottom Navigation",
+      "description": "As a mobile user, I want thumb-friendly navigation at the bottom.",
+      "acceptanceCriteria": [
+        "Create BottomNav.tsx component",
+        "Bottom bar: h-14 (56px) bg-white shadow-[0_-1px_3px_rgba(0,0,0,0.1)]",
+        "Show only on mobile: block lg:hidden",
+        "4 tabs: Home, Search, Add (+), Recommend",
+        "Active: text-teal-600, inactive: text-slate-400",
+        "Icons: w-6 h-6, labels: text-xs below icons",
+        "Safe area padding: pb-safe or pb-6 for notched phones",
+        "Add button: centered, elevated with bg-teal-600 text-white rounded-full",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 15,
+      "passes": false,
+      "notes": "Mobile navigation in thumb zone. Instagram-style bottom bar."
+    },
+    {
+      "id": "US-016",
+      "title": "Micro-interactions and Hover Effects",
+      "description": "As a user interacting with the interface, I want subtle feedback that feels alive.",
+      "acceptanceCriteria": [
+        "Cards: hover:shadow-lg transition-shadow duration-200",
+        "Buttons: hover:shadow-md transition-all duration-150",
+        "Links: hover:text-teal-700 transition-colors",
+        "List items: hover:bg-slate-50",
+        "Add motion-safe wrapper for animations",
+        "Active states: active:scale-[0.98] for pressable elements",
+        "All transitions use duration-150 or duration-200",
+        "Typecheck passes: npm run build"
+      ],
+      "priority": 16,
+      "passes": false,
+      "notes": "Micro-interactions make interfaces feel alive. Subtle is key."
     }
   ]
 }
