@@ -19,20 +19,79 @@ export default function EmptyState({
     <div className="col-span-full">
       {/* Main empty state message */}
       <div className="text-center py-12 px-4">
-        {/* Icon */}
-        <div className="mx-auto w-16 h-16 mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+        {/* Illustration - Search magnifying glass with document */}
+        <div className="mx-auto w-24 h-24 mb-6 relative">
           <svg
-            className="w-8 h-8 text-slate-400"
+            className="w-24 h-24"
+            viewBox="0 0 96 96"
             fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            {/* Document/folder background */}
+            <rect
+              x="16"
+              y="20"
+              width="48"
+              height="56"
+              rx="4"
+              className="fill-slate-100"
             />
+            <rect
+              x="24"
+              y="32"
+              width="24"
+              height="3"
+              rx="1.5"
+              className="fill-slate-200"
+            />
+            <rect
+              x="24"
+              y="40"
+              width="32"
+              height="3"
+              rx="1.5"
+              className="fill-slate-200"
+            />
+            <rect
+              x="24"
+              y="48"
+              width="20"
+              height="3"
+              rx="1.5"
+              className="fill-slate-200"
+            />
+            {/* Magnifying glass */}
+            <circle
+              cx="62"
+              cy="54"
+              r="18"
+              fill="white"
+              className="stroke-slate-300"
+              strokeWidth="4"
+            />
+            <circle
+              cx="62"
+              cy="54"
+              r="12"
+              className="fill-teal-50"
+            />
+            <line
+              x1="74"
+              y1="66"
+              x2="86"
+              y2="78"
+              className="stroke-slate-300"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+            {/* Question mark in magnifying glass */}
+            <path
+              d="M59 50C59 48.5 60 47 62 47C64 47 65 48.5 65 50C65 51.5 64 52 63 52.5V54"
+              className="stroke-teal-400"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <circle cx="63" cy="57" r="1" className="fill-teal-400" />
           </svg>
         </div>
 
@@ -50,7 +109,7 @@ export default function EmptyState({
 
         {/* Action buttons */}
         <div className="flex flex-wrap justify-center gap-3">
-          {hasFilters && (
+          {hasFilters ? (
             <Link
               href="/recommend"
               className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md active:scale-[0.98] transition-all duration-150"
@@ -68,7 +127,27 @@ export default function EmptyState({
                   d="M6 18L18 6M6 6l12 12"
                 />
               </svg>
-              Clear all filters
+              Clear filters
+            </Link>
+          ) : (
+            <Link
+              href="/recommend"
+              className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md active:scale-[0.98] transition-all duration-150"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+              Browse all
             </Link>
           )}
           <Link
