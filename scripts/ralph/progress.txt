@@ -13,6 +13,14 @@ Started: Fri Jan  9 19:18:28 +08 2026
 - Header/navigation component is at `src/components/Navigation.tsx` (not Header.tsx)
 - Premium search input pattern: h-[52px] sm:h-14, border-2 border-slate-200, rounded-xl, focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20
 - Category pills pattern: h-10 px-6 py-2 rounded-full, inactive: bg-white border-slate-200, active: bg-teal-600 border-teal-600
+- Filter dropdown pattern: h-10 rounded-full, inactive: bg-white border-slate-200, active: bg-teal-100 text-teal-700 border-teal-300, dropdown shadow-lg rounded-lg
+- Form field pattern: h-[52px] border-[1.5px] border-slate-200 rounded-lg, focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20, placeholder:text-slate-400
+- Textarea pattern: min-h-[120px] with same styling as inputs
+- Form label pattern: text-sm font-medium text-slate-700 mb-2
+- Button system pattern: Primary: h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold, Secondary: bg-white border-slate-300 text-slate-700
+- Button hover pattern: hover:bg-teal-700 hover:shadow-md (primary), hover:bg-slate-50 hover:shadow-md (secondary)
+- Button active pattern: active:bg-teal-800 active:scale-[0.98] with transition-all duration-150
+- Disabled button pattern: disabled:opacity-50 disabled:cursor-not-allowed
 
 ---
 
@@ -116,4 +124,57 @@ Started: Fri Jan  9 19:18:28 +08 2026
   - Use whitespace-nowrap on pills to prevent text wrapping during scroll
   - Desktop uses flex-wrap, mobile uses single-row scrollable container
   - Updated recommend page to use slate palette (slate-50, slate-200, slate-600, slate-900)
+---
+
+## 2026-01-09 - US-008
+- What was implemented: Filter UI elegance with custom dropdown components
+- Files changed: `src/components/RecommendFilters.tsx`, `src/components/CategoryFilter.tsx`, `src/components/StatusFilter.tsx`
+- **Learnings for future iterations:**
+  - Converted native `<select>` elements to custom dropdown components with check icons
+  - FilterDropdown reusable component pattern: button + absolute positioned dropdown
+  - Filter button pattern: h-10 px-4 rounded-full border, inactive: bg-white border-slate-200, active: bg-teal-100 text-teal-700 border-teal-300
+  - Dropdown styling: shadow-lg rounded-lg bg-white border-slate-200, options h-11 with hover:bg-slate-50
+  - Selected option shows check icon (w-5 h-5 text-teal-600) aligned to right
+  - Active state shows value not label (e.g., "Legal" not "Category")
+  - Click-outside-to-close uses useRef + mousedown listener
+  - Escape key closes dropdown with keydown listener
+  - Chevron rotates 180deg when open: transition-transform duration-200
+  - Mobile filter sheet keeps native selects for better UX on touch devices
+  - Desktop filters row uses items-center for vertical alignment
+---
+
+## 2026-01-09 - US-009
+- What was implemented: Premium form field styling for inputs and textareas
+- Files changed: `src/components/ReviewForm.tsx`, `src/app/recommend/new/page.tsx`
+- **Learnings for future iterations:**
+  - Form components: ReviewForm.tsx (review submission), recommend/new/page.tsx (add recommendation)
+  - Input height: h-[52px] (52px) for touch-friendly targets
+  - Border style: border-[1.5px] border-slate-200 rounded-lg (thicker than 1px for visibility)
+  - Focus state: focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 (subtle ring glow)
+  - Error state: border-red-400 ring-2 ring-red-400/20 (red border with glow)
+  - Label pattern: text-sm font-medium text-slate-700 mb-2 (consistent spacing)
+  - Placeholder: placeholder:text-slate-400 for subtle hint text
+  - Textarea: same styling with min-h-[120px] instead of rows attribute
+  - Select element: same h-[52px] with text-slate-700 and cursor-pointer
+  - All inputs use transition-all duration-200 for smooth state changes
+  - Button styling also updated: h-12 font-semibold with hover:shadow-md and active:scale-[0.98]
+  - Migrated all gray-* colors to slate-* palette for consistency
+---
+
+## 2026-01-09 - US-010
+- What was implemented: Consistent button system across the application
+- Files changed: `src/components/ReviewForm.tsx`, `src/app/recommend/new/page.tsx`, `src/components/EmptyState.tsx`, `src/components/RecommendFilters.tsx`, `src/app/login/page.tsx`, `src/app/page.tsx`
+- **Learnings for future iterations:**
+  - Primary button pattern: h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold
+  - Primary hover: hover:bg-teal-700 hover:shadow-md
+  - Primary active: active:bg-teal-800 active:scale-[0.98]
+  - Secondary button pattern: h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold
+  - Secondary hover: hover:bg-slate-50 hover:shadow-md
+  - Secondary active: active:scale-[0.98]
+  - Disabled state: disabled:opacity-50 disabled:cursor-not-allowed
+  - All buttons use transition-all duration-150 for snappy interactions
+  - Login page converted from blue to teal palette for consistency
+  - EmptyState.tsx gray colors migrated to slate palette
+  - Text size is text-base (16px) with font-semibold for confident feel
+  - Buttons feel like "confident handshakes" - solid, responsive, inviting
 ---
