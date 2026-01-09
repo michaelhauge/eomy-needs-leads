@@ -20,9 +20,9 @@ export default function EmptyState({
       {/* Main empty state message */}
       <div className="text-center py-12 px-4">
         {/* Icon */}
-        <div className="mx-auto w-16 h-16 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+        <div className="mx-auto w-16 h-16 mb-4 bg-slate-100 rounded-full flex items-center justify-center">
           <svg
-            className="w-8 h-8 text-gray-400"
+            className="w-8 h-8 text-slate-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -37,12 +37,12 @@ export default function EmptyState({
         </div>
 
         {/* Message */}
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+        <h3 className="text-xl font-semibold text-slate-900 mb-2">
           {searchTerm
             ? `No results for "${searchTerm}"`
             : 'No recommendations found'}
         </h3>
-        <p className="text-gray-500 mb-6 max-w-md mx-auto">
+        <p className="text-base text-slate-600 mb-6 max-w-md mx-auto">
           {hasFilters
             ? 'Try adjusting your filters or search terms to find what you\u2019re looking for.'
             : 'Be the first to recommend a business to fellow EO members!'}
@@ -53,7 +53,7 @@ export default function EmptyState({
           {hasFilters && (
             <Link
               href="/recommend"
-              className="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md active:scale-[0.98] transition-all duration-150"
             >
               <svg
                 className="w-4 h-4"
@@ -73,7 +73,7 @@ export default function EmptyState({
           )}
           <Link
             href="/recommend/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
+            className="inline-flex items-center gap-2 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] transition-all duration-150"
           >
             <svg
               className="w-4 h-4"
@@ -95,8 +95,8 @@ export default function EmptyState({
 
       {/* Browse all categories section */}
       {topCategories.length > 0 && (
-        <div className="border-t border-gray-200 pt-8 mt-4">
-          <h4 className="text-sm font-medium text-gray-600 mb-4 text-center">
+        <div className="border-t border-slate-200 pt-8 mt-4">
+          <h4 className="text-sm font-medium text-slate-600 mb-4 text-center">
             Browse all categories
           </h4>
           <div className="flex flex-wrap justify-center gap-2">
@@ -120,8 +120,8 @@ export default function EmptyState({
 
       {/* Popular recommendations as alternatives */}
       {popularRecommendations.length > 0 && (
-        <div className="border-t border-gray-200 pt-8 mt-8">
-          <h4 className="text-sm font-medium text-gray-600 mb-4 text-center">
+        <div className="border-t border-slate-200 pt-8 mt-8">
+          <h4 className="text-sm font-medium text-slate-600 mb-4 text-center">
             Popular recommendations you might like
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">

@@ -129,7 +129,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           <div className="text-center mt-6">
             <Link
               href="/recommend"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-teal-600 text-teal-600 font-semibold rounded-lg hover:bg-teal-50 transition-colors"
+              className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md active:scale-[0.98] transition-all duration-150"
             >
               View All Recommendations
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

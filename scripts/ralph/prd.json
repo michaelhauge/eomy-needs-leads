@@ -137,7 +137,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "Filters are tools, not obstacles. Show active state clearly."
     },
     {
@@ -155,7 +155,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "Apply to recommend/new form and ReviewForm component."
     },
     {
@@ -173,7 +173,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "Buttons are commitments. Make them feel like confident handshakes."
     },
     {
