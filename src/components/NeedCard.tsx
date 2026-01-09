@@ -31,7 +31,7 @@ export default function NeedCard({ need }: NeedCardProps) {
   const leadsCount = Number(need.leads_count) || 0;
 
   return (
-    <Link href={`/need/${need.id}`} className="block active:scale-[0.98] transition-all duration-200">
+    <Link href={`/need/${need.id}`} className="block motion-safe:active:scale-[0.98] transition-all duration-200">
       <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden h-full flex flex-col min-h-[180px] sm:min-h-[200px] border border-slate-100">
         {/* Content */}
         <div className="p-5 sm:p-6 flex-1 flex flex-col">

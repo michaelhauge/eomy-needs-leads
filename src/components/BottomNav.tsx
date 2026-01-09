@@ -45,8 +45,8 @@ export default function BottomNav() {
           href="/recommend/new"
           className={`flex items-center justify-center w-14 h-14 -mt-5 rounded-full shadow-lg transition-all duration-150 ${
             isAddActive
-              ? 'bg-teal-700 scale-95'
-              : 'bg-teal-600 hover:bg-teal-700 active:scale-95'
+              ? 'bg-teal-700 motion-safe:scale-95'
+              : 'bg-teal-600 hover:bg-teal-700 motion-safe:active:scale-95'
           }`}
         >
           <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

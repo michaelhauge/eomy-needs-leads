@@ -112,7 +112,7 @@ export default function EmptyState({
           {hasFilters ? (
             <Link
               href="/recommend"
-              className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md active:scale-[0.98] transition-all duration-150"
+              className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md motion-safe:active:scale-[0.98] transition-all duration-150"
             >
               <svg
                 className="w-4 h-4"
@@ -132,7 +132,7 @@ export default function EmptyState({
           ) : (
             <Link
               href="/recommend"
-              className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md active:scale-[0.98] transition-all duration-150"
+              className="inline-flex items-center gap-2 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md motion-safe:active:scale-[0.98] transition-all duration-150"
             >
               <svg
                 className="w-4 h-4"
@@ -152,7 +152,7 @@ export default function EmptyState({
           )}
           <Link
             href="/recommend/new"
-            className="inline-flex items-center gap-2 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] transition-all duration-150"
+            className="inline-flex items-center gap-2 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 motion-safe:active:scale-[0.98] transition-all duration-150"
           >
             <svg
               className="w-4 h-4"
