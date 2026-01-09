@@ -263,7 +263,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "Mobile navigation in thumb zone. Instagram-style bottom bar."
     },
     {
@@ -281,7 +281,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "Micro-interactions make interfaces feel alive. Subtle is key."
     }
   ]
