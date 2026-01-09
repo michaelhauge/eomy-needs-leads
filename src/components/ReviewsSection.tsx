@@ -113,7 +113,7 @@ export default function ReviewsSection({
       {isLoading ? (
         <div className="space-y-4">
           {[...Array(Math.min(initialReviewCount, 3))].map((_, i) => (
-            <div key={i} className="bg-gray-100 rounded-lg h-24 animate-pulse" />
+            <div key={i} className="bg-slate-200 rounded-2xl h-24 animate-shimmer" />
           ))}
         </div>
       ) : reviews.length === 0 ? (
