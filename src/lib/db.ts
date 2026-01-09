@@ -173,11 +173,12 @@ export async function searchNeeds(query: string): Promise<Need[]> {
 export async function getRecommendations(options?: {
   categorySlug?: string;
   search?: string;
+  minRating?: number;
   limit?: number;
   offset?: number;
 }): Promise<Recommendation[]> {
   if (!sql) return [];
-  const { categorySlug, search, limit = 50, offset = 0 } = options || {};
+  const { categorySlug, search, minRating, limit = 50, offset = 0 } = options || {};
 
   const rows = await sql<Recommendation[]>`
     SELECT
@@ -193,6 +194,7 @@ export async function getRecommendations(options?: {
     WHERE 1=1
       ${categorySlug ? sql`AND c.slug = ${categorySlug}` : sql``}
       ${search ? sql`AND (r.name ILIKE ${'%' + search + '%'} OR r.description ILIKE ${'%' + search + '%'} OR c.name ILIKE ${'%' + search + '%'})` : sql``}
+      ${minRating ? sql`AND COALESCE(r.average_rating, 0) >= ${minRating}` : sql``}
     ORDER BY r.average_rating DESC, r.review_count DESC, r.created_at DESC
     LIMIT ${limit} OFFSET ${offset}
   `;

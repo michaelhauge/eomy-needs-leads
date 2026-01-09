@@ -7,13 +7,16 @@ import { Category } from '@/lib/db';
 
 interface RecommendFiltersProps {
   categories: Category[];
+  totalCount: number;
+  filteredCount: number;
 }
 
-export default function RecommendFilters({ categories }: RecommendFiltersProps) {
+export default function RecommendFilters({ categories, totalCount, filteredCount }: RecommendFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get('category') || '';
   const currentSearch = searchParams.get('search') || '';
+  const currentMinRating = searchParams.get('minRating') || '';
 
   const [searchValue, setSearchValue] = useState(currentSearch);
 
@@ -49,6 +52,16 @@ export default function RecommendFilters({ categories }: RecommendFiltersProps) 
       params.set('category', e.target.value);
     } else {
       params.delete('category');
+    }
+    router.push(`/recommend?${params.toString()}`);
+  };
+
+  const handleRatingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (e.target.value) {
+      params.set('minRating', e.target.value);
+    } else {
+      params.delete('minRating');
     }
     router.push(`/recommend?${params.toString()}`);
   };
@@ -102,7 +115,7 @@ export default function RecommendFilters({ categories }: RecommendFiltersProps) 
         )}
       </div>
 
-      {/* Category dropdown and Add button */}
+      {/* Category dropdown, Rating filter, and Add button */}
       <div className="flex flex-col sm:flex-row gap-3">
         <select
           value={currentCategory}
@@ -121,6 +134,21 @@ export default function RecommendFilters({ categories }: RecommendFiltersProps) 
           ))}
         </select>
 
+        {/* Rating filter */}
+        <select
+          value={currentMinRating}
+          onChange={handleRatingChange}
+          className={`flex-1 sm:flex-none w-full sm:w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+            currentMinRating
+              ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
+              : 'border-gray-200 bg-white'
+          }`}
+        >
+          <option value="">All Ratings</option>
+          <option value="4">4+ Stars</option>
+          <option value="3">3+ Stars</option>
+        </select>
+
         {/* Add button */}
         <Link
           href="/recommend/new"
@@ -131,6 +159,15 @@ export default function RecommendFilters({ categories }: RecommendFiltersProps) 
           </svg>
           Add Recommendation
         </Link>
+      </div>
+
+      {/* Results count */}
+      <div className="text-sm text-gray-600">
+        {filteredCount === totalCount ? (
+          <span>Showing {totalCount} recommendation{totalCount !== 1 ? 's' : ''}</span>
+        ) : (
+          <span>Showing {filteredCount} of {totalCount} recommendation{totalCount !== 1 ? 's' : ''}</span>
+        )}
       </div>
     </div>
   );
