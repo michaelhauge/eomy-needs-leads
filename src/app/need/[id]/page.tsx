@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getNeedById, getLeadsForNeed } from '@/lib/db';
 import Navigation from '@/components/Navigation';
+import BottomNav from '@/components/BottomNav';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -45,7 +46,7 @@ export default async function NeedDetailPage({ params }: PageProps) {
   const leads = await getLeadsForNeed(needId);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0">
       <Navigation />
 
       {/* Content */}
@@ -133,6 +134,9 @@ export default async function NeedDetailPage({ params }: PageProps) {
           </div>
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }

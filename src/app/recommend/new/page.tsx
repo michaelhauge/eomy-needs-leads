@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Navigation from '@/components/Navigation';
+import BottomNav from '@/components/BottomNav';
 import { Category } from '@/lib/db';
 
 export default function NewRecommendationPage() {
@@ -79,7 +80,7 @@ export default function NewRecommendationPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0">
         <Navigation />
         <main className="max-w-2xl mx-auto px-4 py-8">
           <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 text-center">
@@ -93,12 +94,13 @@ export default function NewRecommendationPage() {
             <p className="text-slate-500 text-sm mt-2">Redirecting to recommendations...</p>
           </div>
         </main>
+        <BottomNav />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0">
       <Navigation />
 
       <main className="max-w-2xl mx-auto px-4 py-4 sm:py-8">
@@ -257,6 +259,9 @@ export default function NewRecommendationPage() {
           </form>
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }

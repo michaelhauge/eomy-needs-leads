@@ -10,6 +10,7 @@ import Navigation from '@/components/Navigation';
 import HomeRecommendSearch from '@/components/HomeRecommendSearch';
 import RecommendCard from '@/components/RecommendCard';
 import { SkeletonGrid } from '@/components/SkeletonCard';
+import BottomNav from '@/components/BottomNav';
 
 interface PageProps {
   searchParams: Promise<{
@@ -90,7 +91,7 @@ async function Filters() {
 
 export default async function HomePage({ searchParams }: PageProps) {
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-20 lg:pb-0">
       <Navigation />
 
       {/* Hero Section */}
@@ -172,6 +173,9 @@ export default async function HomePage({ searchParams }: PageProps) {
           </div>
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }
