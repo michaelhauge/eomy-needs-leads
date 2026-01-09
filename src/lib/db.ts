@@ -49,12 +49,25 @@ export interface Recommendation {
   description: string | null;
   category_id: number | null;
   contact_info: string | null;
+  address: string | null;
+  website_url: string | null;
   recommended_by: string;
   upvotes: number;
+  average_rating: number;
+  review_count: number;
   created_at: Date;
   // Joined fields
   category_name?: string;
   category_slug?: string;
+}
+
+export interface Review {
+  id: number;
+  recommendation_id: number;
+  reviewer_name: string;
+  rating: number;
+  review_text: string | null;
+  created_at: Date;
 }
 
 // Database functions
@@ -153,14 +166,18 @@ export async function getRecommendations(options?: {
   const rows = await sql<Recommendation[]>`
     SELECT
       r.id, r.name, r.description, r.category_id, r.contact_info,
-      r.recommended_by, r.upvotes, r.created_at,
+      r.address, r.website_url,
+      r.recommended_by, r.upvotes,
+      COALESCE(r.average_rating, 0)::float as average_rating,
+      COALESCE(r.review_count, 0)::int as review_count,
+      r.created_at,
       c.name as category_name, c.slug as category_slug
     FROM recommendations r
     LEFT JOIN categories c ON r.category_id = c.id
     WHERE 1=1
       ${categorySlug ? sql`AND c.slug = ${categorySlug}` : sql``}
       ${search ? sql`AND (r.name ILIKE ${'%' + search + '%'} OR r.description ILIKE ${'%' + search + '%'})` : sql``}
-    ORDER BY r.created_at DESC
+    ORDER BY r.average_rating DESC, r.review_count DESC, r.created_at DESC
     LIMIT ${limit} OFFSET ${offset}
   `;
 
@@ -172,7 +189,11 @@ export async function getRecommendationById(id: number): Promise<Recommendation 
   const rows = await sql<Recommendation[]>`
     SELECT
       r.id, r.name, r.description, r.category_id, r.contact_info,
-      r.recommended_by, r.upvotes, r.created_at,
+      r.address, r.website_url,
+      r.recommended_by, r.upvotes,
+      COALESCE(r.average_rating, 0)::float as average_rating,
+      COALESCE(r.review_count, 0)::int as review_count,
+      r.created_at,
       c.name as category_name, c.slug as category_slug
     FROM recommendations r
     LEFT JOIN categories c ON r.category_id = c.id
@@ -186,13 +207,70 @@ export async function createRecommendation(data: {
   description?: string;
   category_id?: number;
   contact_info?: string;
+  address?: string;
+  website_url?: string;
   recommended_by: string;
 }): Promise<Recommendation | null> {
   if (!sql) return null;
   const rows = await sql<Recommendation[]>`
-    INSERT INTO recommendations (name, description, category_id, contact_info, recommended_by)
-    VALUES (${data.name}, ${data.description || null}, ${data.category_id || null}, ${data.contact_info || null}, ${data.recommended_by})
-    RETURNING id, name, description, category_id, contact_info, recommended_by, upvotes, created_at
+    INSERT INTO recommendations (name, description, category_id, contact_info, address, website_url, recommended_by)
+    VALUES (
+      ${data.name},
+      ${data.description || null},
+      ${data.category_id || null},
+      ${data.contact_info || null},
+      ${data.address || null},
+      ${data.website_url || null},
+      ${data.recommended_by}
+    )
+    RETURNING id, name, description, category_id, contact_info, address, website_url, recommended_by, upvotes, average_rating, review_count, created_at
   `;
   return rows[0] || null;
+}
+
+// Review functions
+export async function getReviewsForRecommendation(recommendationId: number): Promise<Review[]> {
+  if (!sql) return [];
+  const rows = await sql<Review[]>`
+    SELECT id, recommendation_id, reviewer_name, rating, review_text, created_at
+    FROM reviews
+    WHERE recommendation_id = ${recommendationId}
+    ORDER BY created_at DESC
+  `;
+  return rows;
+}
+
+export async function createReview(data: {
+  recommendation_id: number;
+  reviewer_name: string;
+  rating: number;
+  review_text?: string;
+}): Promise<Review | null> {
+  if (!sql) return null;
+
+  // Insert the review
+  const [review] = await sql<Review[]>`
+    INSERT INTO reviews (recommendation_id, reviewer_name, rating, review_text)
+    VALUES (${data.recommendation_id}, ${data.reviewer_name}, ${data.rating}, ${data.review_text || null})
+    RETURNING id, recommendation_id, reviewer_name, rating, review_text, created_at
+  `;
+
+  // Update the cached average rating and count on the recommendation
+  await sql`
+    UPDATE recommendations
+    SET
+      average_rating = (
+        SELECT ROUND(AVG(rating)::numeric, 1)
+        FROM reviews
+        WHERE recommendation_id = ${data.recommendation_id}
+      ),
+      review_count = (
+        SELECT COUNT(*)
+        FROM reviews
+        WHERE recommendation_id = ${data.recommendation_id}
+      )
+    WHERE id = ${data.recommendation_id}
+  `;
+
+  return review;
 }

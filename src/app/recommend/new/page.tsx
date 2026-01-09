@@ -18,6 +18,8 @@ export default function NewRecommendationPage() {
     name: '',
     description: '',
     category_id: '',
+    address: '',
+    website_url: '',
     contact_info: '',
     recommended_by: '',
   });
@@ -177,6 +179,38 @@ export default function NewRecommendationPage() {
                 onChange={handleChange}
                 placeholder="What services do they offer? Why do you recommend them?"
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none text-base"
+              />
+            </div>
+
+            {/* Address */}
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                Address
+              </label>
+              <textarea
+                id="address"
+                name="address"
+                rows={2}
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="e.g., Level 10, Menara XYZ, Jalan Ampang, 50450 Kuala Lumpur"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none resize-none text-base"
+              />
+            </div>
+
+            {/* Website URL */}
+            <div>
+              <label htmlFor="website_url" className="block text-sm font-medium text-gray-700 mb-1">
+                Website
+              </label>
+              <input
+                type="url"
+                id="website_url"
+                name="website_url"
+                value={formData.website_url}
+                onChange={handleChange}
+                placeholder="e.g., www.example.com"
+                className="w-full min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none text-base"
               />
             </div>
 
