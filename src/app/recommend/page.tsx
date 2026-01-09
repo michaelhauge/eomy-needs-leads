@@ -1,8 +1,9 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { getRecommendations, getCategoriesWithCounts, SortOption } from '@/lib/db';
+import { getRecommendations, getCategoriesWithCounts, getTopCategories, SortOption } from '@/lib/db';
 import RecommendCard from '@/components/RecommendCard';
 import RecommendFilters from '@/components/RecommendFilters';
+import CategoryPills from '@/components/CategoryPills';
 import Navigation from '@/components/Navigation';
 
 interface PageProps {
@@ -74,6 +75,11 @@ async function Filters({ searchParams }: { searchParams: PageProps['searchParams
   return <RecommendFilters categories={categories} totalCount={totalCount} filteredCount={filteredCount} />;
 }
 
+async function PopularCategories() {
+  const topCategories = await getTopCategories(8);
+  return <CategoryPills categories={topCategories} />;
+}
+
 export default async function RecommendPage({ searchParams }: PageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,6 +99,14 @@ export default async function RecommendPage({ searchParams }: PageProps) {
         <div className="mb-6">
           <Suspense fallback={<div className="h-24 sm:h-12 bg-gray-200 rounded-lg animate-pulse" />}>
             <Filters searchParams={searchParams} />
+          </Suspense>
+        </div>
+
+        {/* Popular Categories */}
+        <div className="mb-6">
+          <h2 className="text-sm font-medium text-gray-600 mb-3">Popular Categories</h2>
+          <Suspense fallback={<div className="h-8 bg-gray-200 rounded-lg animate-pulse w-3/4" />}>
+            <PopularCategories />
           </Suspense>
         </div>
 
