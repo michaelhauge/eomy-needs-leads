@@ -8,6 +8,9 @@ Started: Fri Jan  9 19:18:28 +08 2026
 - Build command: `npm run build`
 - Uses Next.js 16 with React 19
 - Slate color palette maps to navy tones (slate-900 = #0f172a navy)
+- Badge color pattern: bg-{color}-100 text-{color}-700 with rounded-full (teal for recommends, blue for needs)
+- Card shadow pattern: shadow-md at rest, hover:shadow-lg with transition-shadow duration-200
+- Header/navigation component is at `src/components/Navigation.tsx` (not Header.tsx)
 
 ---
 
@@ -35,4 +38,50 @@ Started: Fri Jan  9 19:18:28 +08 2026
   - Labels use wide tracking (`--tracking-wide: 0.05em`) with uppercase transform
   - Body has base 16px with 1.5 line-height set on body element
   - `.tabular-nums` class uses `font-variant-numeric: tabular-nums` for number alignment
+---
+
+## 2026-01-09 - US-003
+- What was implemented: Card component redesign with premium styling
+- Files changed: `src/components/RecommendCard.tsx`, `src/components/NeedCard.tsx`, `src/components/ReviewCard.tsx`, `src/components/StarRating.tsx`
+- **Learnings for future iterations:**
+  - Card components use rounded-2xl (16px border-radius) for premium feel
+  - Shadow hierarchy: shadow-md at rest, shadow-lg on hover with duration-200
+  - Padding: p-5 (20px) mobile, sm:p-6 (24px) desktop
+  - Category badges: rounded-full with bg-{color}-100 text-{color}-700 pattern
+    - RecommendCard: teal (bg-teal-100 text-teal-700)
+    - NeedCard: blue (bg-blue-100 text-blue-700)
+  - StarRating uses amber-400 (not yellow-400) for premium feel
+  - All gray colors migrated to slate palette for consistency
+  - active:scale-[0.98] provides tactile press feedback
+  - ReviewCard uses border border-slate-200 (not bg-gray-50) for cleaner look
+---
+
+## 2026-01-09 - US-004
+- What was implemented: Navigation header simplification - clean, minimal design
+- Files changed: `src/components/Navigation.tsx`
+- **Learnings for future iterations:**
+  - Header is in `src/components/Navigation.tsx` (not Header.tsx)
+  - Removed gradient background, changed to white with shadow-sm
+  - Height: h-14 (56px) mobile, sm:h-16 (64px) desktop
+  - Logo: simple text link with font-semibold text-slate-900
+  - Nav tabs: text links with border-b-2 underline for active state
+  - Active state: text-teal-600 border-teal-600, inactive: text-slate-600 border-transparent
+  - Sticky positioning with z-50 for always-visible navigation
+  - Simplified layout with flex items-center justify-between
+  - "Less is more" - content is the hero, not the navigation
+---
+
+## 2026-01-09 - US-005
+- What was implemented: Hero section redesign with dramatic dark gradient
+- Files changed: `src/app/page.tsx`
+- **Learnings for future iterations:**
+  - Hero section uses slate gradient: bg-gradient-to-b from-slate-900 to-slate-800
+  - Responsive height: min-h-[30vh] mobile, md:min-h-[40vh] desktop
+  - Content centered with max-w-3xl mx-auto and flex items-center
+  - Heading: text-4xl md:text-5xl font-bold text-white
+  - Subheading: text-lg text-slate-300 (not text-slate-400 for better contrast)
+  - Separated hero from search/recommendations into distinct sections
+  - Search section now uses bg-white with border-b border-slate-200
+  - Page background changed from bg-gray-50 to bg-slate-50 for consistency
+  - Skeleton cards updated to rounded-2xl to match card styling
 ---

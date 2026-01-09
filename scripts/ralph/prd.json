@@ -50,7 +50,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Apply to both RecommendCard and NeedCard. NeedCard uses blue-100/blue-700 badges."
     },
     {
@@ -67,7 +67,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "Simplify - less is more. The content is the hero, not the nav."
     },
     {
@@ -84,7 +84,7 @@
         "Typecheck passes: npm run build"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "Jobs keynote style - one big idea per screen. Dramatic dark background."
     },
     {

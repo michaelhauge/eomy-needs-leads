@@ -89,21 +89,24 @@ async function Filters() {
 
 export default async function HomePage({ searchParams }: PageProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       <Navigation />
 
-      {/* Find Trusted Resources Section */}
-      <section className="bg-gradient-to-br from-teal-50 to-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-8 sm:py-10">
-          <div className="text-center mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
-              Find Trusted Resources
-            </h2>
-            <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
-              Businesses and services recommended by EO Malaysia members
-            </p>
-          </div>
+      {/* Hero Section */}
+      <section className="bg-gradient-to-b from-slate-900 to-slate-800 min-h-[30vh] md:min-h-[40vh] flex items-center">
+        <div className="max-w-3xl mx-auto px-4 py-12 md:py-16 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            Find What You Need. Share What You Know.
+          </h1>
+          <p className="text-lg text-slate-300">
+            Trusted resources from EO Malaysia members
+          </p>
+        </div>
+      </section>
 
+      {/* Search and Top Recommendations Section */}
+      <section className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:py-10">
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto mb-8">
             <HomeRecommendSearch />
@@ -114,7 +117,7 @@ export default async function HomePage({ searchParams }: PageProps) {
             fallback={
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-md h-40 sm:h-48 animate-pulse" />
+                  <div key={i} className="bg-white rounded-2xl shadow-md h-40 sm:h-48 animate-pulse" />
                 ))}
               </div>
             }
@@ -126,7 +129,7 @@ export default async function HomePage({ searchParams }: PageProps) {
           <div className="text-center mt-6">
             <Link
               href="/recommend"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-teal-600 text-teal-600 font-medium rounded-lg hover:bg-teal-50 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-teal-600 text-teal-600 font-semibold rounded-lg hover:bg-teal-50 transition-colors"
             >
               View All Recommendations
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
