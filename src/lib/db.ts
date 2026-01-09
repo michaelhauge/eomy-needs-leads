@@ -43,6 +43,20 @@ export interface Lead {
   provided_by_name?: string;
 }
 
+export interface Recommendation {
+  id: number;
+  name: string;
+  description: string | null;
+  category_id: number | null;
+  contact_info: string | null;
+  recommended_by: string;
+  upvotes: number;
+  created_at: Date;
+  // Joined fields
+  category_name?: string;
+  category_slug?: string;
+}
+
 // Database functions
 export async function getCategories(): Promise<Category[]> {
   if (!sql) return [];
@@ -124,4 +138,61 @@ export async function getLeaderboard(limit: number = 20): Promise<Member[]> {
 
 export async function searchNeeds(query: string): Promise<Need[]> {
   return getNeeds({ search: query, limit: 50 });
+}
+
+// Recommendations functions
+export async function getRecommendations(options?: {
+  categorySlug?: string;
+  search?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<Recommendation[]> {
+  if (!sql) return [];
+  const { categorySlug, search, limit = 50, offset = 0 } = options || {};
+
+  const rows = await sql<Recommendation[]>`
+    SELECT
+      r.id, r.name, r.description, r.category_id, r.contact_info,
+      r.recommended_by, r.upvotes, r.created_at,
+      c.name as category_name, c.slug as category_slug
+    FROM recommendations r
+    LEFT JOIN categories c ON r.category_id = c.id
+    WHERE 1=1
+      ${categorySlug ? sql`AND c.slug = ${categorySlug}` : sql``}
+      ${search ? sql`AND (r.name ILIKE ${'%' + search + '%'} OR r.description ILIKE ${'%' + search + '%'})` : sql``}
+    ORDER BY r.created_at DESC
+    LIMIT ${limit} OFFSET ${offset}
+  `;
+
+  return rows;
+}
+
+export async function getRecommendationById(id: number): Promise<Recommendation | null> {
+  if (!sql) return null;
+  const rows = await sql<Recommendation[]>`
+    SELECT
+      r.id, r.name, r.description, r.category_id, r.contact_info,
+      r.recommended_by, r.upvotes, r.created_at,
+      c.name as category_name, c.slug as category_slug
+    FROM recommendations r
+    LEFT JOIN categories c ON r.category_id = c.id
+    WHERE r.id = ${id}
+  `;
+  return rows[0] || null;
+}
+
+export async function createRecommendation(data: {
+  name: string;
+  description?: string;
+  category_id?: number;
+  contact_info?: string;
+  recommended_by: string;
+}): Promise<Recommendation | null> {
+  if (!sql) return null;
+  const rows = await sql<Recommendation[]>`
+    INSERT INTO recommendations (name, description, category_id, contact_info, recommended_by)
+    VALUES (${data.name}, ${data.description || null}, ${data.category_id || null}, ${data.contact_info || null}, ${data.recommended_by})
+    RETURNING id, name, description, category_id, contact_info, recommended_by, upvotes, created_at
+  `;
+  return rows[0] || null;
 }

@@ -25,7 +25,7 @@ export default function StatusFilter() {
     <select
       value={currentStatus}
       onChange={handleChange}
-      className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white cursor-pointer"
+      className="w-full sm:w-auto min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white cursor-pointer text-base"
     >
       <option value="">All Statuses</option>
       {statuses.map((status) => (
