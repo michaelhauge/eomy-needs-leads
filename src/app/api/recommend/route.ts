@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const { name, description, category_id, contact_info, recommended_by } = body;
+    const { name, description, category_id, address, website_url, contact_info, recommended_by } = body;
 
     // Validate required fields
     if (!name || !recommended_by) {
@@ -20,6 +20,8 @@ export async function POST(request: NextRequest) {
       name: name.trim(),
       description: description?.trim() || undefined,
       category_id: category_id ? parseInt(category_id, 10) : undefined,
+      address: address?.trim() || undefined,
+      website_url: website_url?.trim() || undefined,
       contact_info: contact_info?.trim() || undefined,
       recommended_by: recommended_by.trim(),
     });
