@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Category, SortOption } from '@/lib/db';
 
 interface RecommendFiltersProps {
@@ -31,6 +31,106 @@ function getSortLabel(sort: SortOption): string {
     name: 'A-Z',
   };
   return labels[sort];
+}
+
+// Custom dropdown option interface
+interface DropdownOption {
+  value: string;
+  label: string;
+}
+
+// Custom dropdown component with check icons
+function FilterDropdown({
+  options,
+  value,
+  onChange,
+  placeholder,
+  activeLabel,
+}: {
+  options: DropdownOption[];
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  activeLabel?: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close on escape key
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
+
+  const displayLabel = value ? (activeLabel || options.find(o => o.value === value)?.label || placeholder) : placeholder;
+  const isActive = !!value;
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center gap-2 h-10 px-4 rounded-full border transition-all duration-200 text-sm font-medium ${
+          isActive
+            ? 'bg-teal-100 text-teal-700 border-teal-300'
+            : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+        }`}
+      >
+        <span>{displayLabel}</span>
+        <svg
+          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-2 min-w-[180px] bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-50">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+              className={`w-full flex items-center justify-between h-11 px-4 text-left text-sm transition-colors ${
+                value === option.value
+                  ? 'bg-teal-50 text-teal-700 font-medium'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              <span>{option.label}</span>
+              {value === option.value && (
+                <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function RecommendFilters({ categories, totalCount, filteredCount }: RecommendFiltersProps) {
@@ -155,10 +255,10 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
             value={searchValue}
             onChange={handleSearchChange}
             placeholder="Search recommendations..."
-            className="w-full min-h-[48px] px-4 py-3 pl-11 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none bg-white text-base"
+            className="w-full h-10 px-4 pl-10 pr-10 border border-slate-200 rounded-full focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 outline-none bg-white text-sm transition-all duration-200"
           />
           <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -174,7 +274,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
             <button
               type="button"
               onClick={clearSearch}
-              className="absolute right-3 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="Clear search"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,13 +288,13 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
         <button
           type="button"
           onClick={() => setIsFilterModalOpen(true)}
-          className="sm:hidden flex items-center justify-center gap-2 min-w-[48px] min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors relative"
+          className="sm:hidden flex items-center justify-center gap-2 h-10 px-4 border border-slate-200 rounded-full bg-white hover:bg-slate-50 transition-all duration-200 relative"
           aria-label="Open filters"
         >
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
-          <span className="text-gray-700 font-medium">Filters</span>
+          <span className="text-slate-700 font-medium text-sm">Filters</span>
           {activeFilterCount > 0 && (
             <span className="absolute -top-1 -right-1 w-5 h-5 bg-teal-600 text-white text-xs rounded-full flex items-center justify-center font-medium">
               {activeFilterCount}
@@ -246,64 +346,82 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
       )}
 
       {/* Desktop filters row - hidden on mobile */}
-      <div className="hidden sm:flex flex-row gap-3">
-        <select
+      <div className="hidden sm:flex flex-row items-center gap-3">
+        {/* Category dropdown */}
+        <FilterDropdown
+          options={[
+            { value: '', label: 'All Categories' },
+            ...categories.map((cat) => ({
+              value: cat.slug,
+              label: `${cat.name} (${cat.recommendation_count})`,
+            })),
+          ]}
           value={currentCategory}
-          onChange={handleCategoryChange}
-          className={`flex-none w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
-            currentCategory
-              ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
-              : 'border-gray-200 bg-white'
-          }`}
-        >
-          <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.slug}>
-              {cat.name} ({cat.recommendation_count})
-            </option>
-          ))}
-        </select>
+          onChange={(value) => {
+            const params = new URLSearchParams(searchParams.toString());
+            if (value) {
+              params.set('category', value);
+            } else {
+              params.delete('category');
+            }
+            router.push(`/recommend?${params.toString()}`);
+          }}
+          placeholder="Category"
+          activeLabel={currentCategory ? getCategoryName(categories, currentCategory) : undefined}
+        />
 
-        {/* Rating filter */}
-        <select
+        {/* Rating dropdown */}
+        <FilterDropdown
+          options={[
+            { value: '', label: 'All Ratings' },
+            { value: '4', label: '4+ Stars' },
+            { value: '3', label: '3+ Stars' },
+          ]}
           value={currentMinRating}
-          onChange={handleRatingChange}
-          className={`flex-none w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
-            currentMinRating
-              ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
-              : 'border-gray-200 bg-white'
-          }`}
-        >
-          <option value="">All Ratings</option>
-          <option value="4">4+ Stars</option>
-          <option value="3">3+ Stars</option>
-        </select>
+          onChange={(value) => {
+            const params = new URLSearchParams(searchParams.toString());
+            if (value) {
+              params.set('minRating', value);
+            } else {
+              params.delete('minRating');
+            }
+            router.push(`/recommend?${params.toString()}`);
+          }}
+          placeholder="Rating"
+          activeLabel={currentMinRating ? getRatingLabel(currentMinRating) : undefined}
+        />
 
         {/* Sort dropdown */}
-        <select
+        <FilterDropdown
+          options={[
+            { value: 'rating', label: 'Highest Rated' },
+            { value: 'reviews', label: 'Most Reviewed' },
+            { value: 'newest', label: 'Newest' },
+            { value: 'name', label: 'A-Z' },
+          ]}
           value={currentSort}
-          onChange={handleSortChange}
-          className={`flex-none w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
-            currentSort !== 'rating'
-              ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
-              : 'border-gray-200 bg-white'
-          }`}
-        >
-          <option value="rating">Highest Rated</option>
-          <option value="reviews">Most Reviewed</option>
-          <option value="newest">Newest</option>
-          <option value="name">A-Z</option>
-        </select>
+          onChange={(value) => {
+            const params = new URLSearchParams(searchParams.toString());
+            if (value && value !== 'rating') {
+              params.set('sort', value);
+            } else {
+              params.delete('sort');
+            }
+            router.push(`/recommend?${params.toString()}`);
+          }}
+          placeholder="Sort"
+          activeLabel={currentSort !== 'rating' ? getSortLabel(currentSort) : undefined}
+        />
 
         {/* Add button */}
         <Link
           href="/recommend/new"
-          className="flex items-center justify-center gap-2 min-h-[48px] px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium text-base"
+          className="flex items-center justify-center gap-2 h-10 px-6 bg-teal-600 text-white rounded-full hover:bg-teal-700 transition-all duration-200 font-medium text-sm"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Add Recommendation
+          Add
         </Link>
       </div>
 
@@ -319,12 +437,12 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
       </Link>
 
       {/* Results count and search summary */}
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-slate-600">
         {currentSearch ? (
           <span>
             {filteredCount} result{filteredCount !== 1 ? 's' : ''} for &ldquo;{currentSearch}&rdquo;
             {filteredCount !== totalCount && (
-              <span className="text-gray-400"> (of {totalCount} total)</span>
+              <span className="text-slate-400"> (of {totalCount} total)</span>
             )}
           </span>
         ) : filteredCount === totalCount ? (
@@ -347,16 +465,16 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-hidden animate-slide-up">
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              <div className="w-10 h-1 bg-slate-300 rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-slate-200">
+              <h2 className="text-lg font-semibold text-slate-900">Filters</h2>
               <button
                 type="button"
                 onClick={() => setIsFilterModalOpen(false)}
-                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-slate-100 text-slate-500 transition-colors"
                 aria-label="Close filters"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -369,17 +487,17 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
             <div className="overflow-y-auto px-4 py-4 space-y-6" style={{ maxHeight: 'calc(85vh - 180px)' }}>
               {/* Category Filter */}
               <div>
-                <label htmlFor="mobile-category" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="mobile-category" className="block text-sm font-medium text-slate-700 mb-2">
                   Category
                 </label>
                 <select
                   id="mobile-category"
                   value={currentCategory}
                   onChange={handleCategoryChange}
-                  className={`w-full min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+                  className={`w-full h-11 px-4 border rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 outline-none cursor-pointer text-sm transition-all duration-200 ${
                     currentCategory
-                      ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
-                      : 'border-gray-200 bg-white'
+                      ? 'border-teal-300 bg-teal-100 text-teal-700 font-medium'
+                      : 'border-slate-200 bg-white text-slate-700'
                   }`}
                 >
                   <option value="">All Categories</option>
@@ -393,17 +511,17 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
 
               {/* Rating Filter */}
               <div>
-                <label htmlFor="mobile-rating" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="mobile-rating" className="block text-sm font-medium text-slate-700 mb-2">
                   Minimum Rating
                 </label>
                 <select
                   id="mobile-rating"
                   value={currentMinRating}
                   onChange={handleRatingChange}
-                  className={`w-full min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+                  className={`w-full h-11 px-4 border rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 outline-none cursor-pointer text-sm transition-all duration-200 ${
                     currentMinRating
-                      ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
-                      : 'border-gray-200 bg-white'
+                      ? 'border-teal-300 bg-teal-100 text-teal-700 font-medium'
+                      : 'border-slate-200 bg-white text-slate-700'
                   }`}
                 >
                   <option value="">All Ratings</option>
@@ -414,17 +532,17 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
 
               {/* Sort Option */}
               <div>
-                <label htmlFor="mobile-sort" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="mobile-sort" className="block text-sm font-medium text-slate-700 mb-2">
                   Sort By
                 </label>
                 <select
                   id="mobile-sort"
                   value={currentSort}
                   onChange={handleSortChange}
-                  className={`w-full min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+                  className={`w-full h-11 px-4 border rounded-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 outline-none cursor-pointer text-sm transition-all duration-200 ${
                     currentSort !== 'rating'
-                      ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
-                      : 'border-gray-200 bg-white'
+                      ? 'border-teal-300 bg-teal-100 text-teal-700 font-medium'
+                      : 'border-slate-200 bg-white text-slate-700'
                   }`}
                 >
                   <option value="rating">Highest Rated</option>
@@ -436,13 +554,13 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
             </div>
 
             {/* Footer Actions */}
-            <div className="px-4 py-4 border-t border-gray-200 bg-white">
+            <div className="px-4 py-4 border-t border-slate-200 bg-white">
               <div className="flex gap-3">
                 {activeFilterCount > 0 && (
                   <button
                     type="button"
                     onClick={clearAllFilters}
-                    className="flex-1 min-h-[48px] px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-base"
+                    className="flex-1 h-11 px-4 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-all duration-200 font-medium text-sm"
                   >
                     Clear All
                   </button>
@@ -450,7 +568,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
                 <button
                   type="button"
                   onClick={() => setIsFilterModalOpen(false)}
-                  className="flex-1 min-h-[48px] px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium text-base"
+                  className="flex-1 h-11 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-all duration-200 font-medium text-sm"
                 >
                   Show Results
                 </button>
