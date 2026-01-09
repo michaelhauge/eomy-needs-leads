@@ -107,12 +107,16 @@ export default function RecommendFilters({ categories }: RecommendFiltersProps) 
         <select
           value={currentCategory}
           onChange={handleCategoryChange}
-          className="flex-1 sm:flex-none w-full sm:w-auto min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none bg-white cursor-pointer text-base"
+          className={`flex-1 sm:flex-none w-full sm:w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+            currentCategory
+              ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
+              : 'border-gray-200 bg-white'
+          }`}
         >
           <option value="">All Categories</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.slug}>
-              {cat.name}
+              {cat.name} ({cat.recommendation_count})
             </option>
           ))}
         </select>

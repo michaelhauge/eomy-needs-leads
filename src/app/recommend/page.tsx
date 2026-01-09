@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { getRecommendations, getCategories } from '@/lib/db';
+import { getRecommendations, getCategoriesWithCounts } from '@/lib/db';
 import RecommendCard from '@/components/RecommendCard';
 import RecommendFilters from '@/components/RecommendFilters';
 import Navigation from '@/components/Navigation';
@@ -45,7 +45,7 @@ async function RecommendationsGrid({ searchParams }: { searchParams: PageProps['
 }
 
 async function Filters() {
-  const categories = await getCategories();
+  const categories = await getCategoriesWithCounts();
   return <RecommendFilters categories={categories} />;
 }
 
