@@ -24,6 +24,8 @@ Started: Fri Jan  9 19:18:28 +08 2026
 - Skeleton pattern: Use SkeletonCard component from `src/components/SkeletonCard.tsx` with animate-shimmer class
 - Skeleton card sizing: min-h-[180px] sm:min-h-[200px], rounded-2xl to match actual cards
 - SkeletonGrid component for rendering multiple skeleton cards (default count: 6)
+- Mobile bottom nav: BottomNav component at `src/components/BottomNav.tsx`, pages need pb-20 lg:pb-0
+- Motion-safe pattern: Use `motion-safe:active:scale-[0.98]` instead of `active:scale-[0.98]` for accessibility
 
 ---
 
@@ -241,4 +243,38 @@ Started: Fri Jan  9 19:18:28 +08 2026
   - Empty state: star SVG illustration + "Be the first to review" headline + personalized message with business name
   - Empty state CTA: full h-12 primary button styling for prominent action
   - Reviews are social proof - make them feel authentic with clear hierarchy
+---
+
+## 2026-01-09 - US-015
+- What was implemented: Mobile bottom navigation with Instagram-style bottom bar
+- Files changed: `src/components/BottomNav.tsx` (new), `src/app/page.tsx`, `src/app/recommend/page.tsx`, `src/app/recommend/[id]/page.tsx`, `src/app/recommend/new/page.tsx`, `src/app/need/[id]/page.tsx`
+- **Learnings for future iterations:**
+  - BottomNav component is at `src/components/BottomNav.tsx`
+  - Fixed position at bottom: fixed bottom-0 left-0 right-0 z-50
+  - Shadow for top edge: shadow-[0_-1px_3px_rgba(0,0,0,0.1)]
+  - Mobile only: block lg:hidden
+  - Height: h-14 (56px) with max-w-lg mx-auto for centering
+  - 5 tabs: Home, Search, Add (+), Recommend, Profile
+  - Add button elevated with -mt-5 to lift above bar: w-14 h-14 rounded-full bg-teal-600
+  - Active state: text-teal-600, inactive: text-slate-400
+  - Icons: w-6 h-6 with text-xs mt-0.5 labels below
+  - Safe area padding: pb-safe class for notched phones
+  - All pages need pb-20 lg:pb-0 to add space for fixed bottom nav on mobile
+  - Login page is full-screen and doesn't need BottomNav
+---
+
+## 2026-01-09 - US-016
+- What was implemented: Motion-safe wrapper for animations and micro-interaction refinements
+- Files changed: `src/app/globals.css`, `src/components/RecommendCard.tsx`, `src/components/NeedCard.tsx`, `src/components/BottomNav.tsx`, `src/components/EmptyState.tsx`, `src/components/RecommendFilters.tsx`, `src/components/ReviewForm.tsx`, `src/components/ReviewsSection.tsx`, `src/app/recommend/[id]/page.tsx`, `src/app/recommend/new/page.tsx`, `src/app/login/page.tsx`
+- **Learnings for future iterations:**
+  - Use `motion-safe:active:scale-[0.98]` instead of `active:scale-[0.98]` for accessibility
+  - Tailwind v4 supports the motion-safe: prefix which only applies when prefers-reduced-motion is not set
+  - Added CSS @media (prefers-reduced-motion: reduce) rule in globals.css to disable all animations/transitions for users who prefer reduced motion
+  - Shimmer animation gracefully falls back to static background when motion is disabled
+  - Created utility classes for common patterns: `.press-scale`, `.hover-lift`, `.link-animate`
+  - All existing hover effects (shadow-lg on cards, shadow-md on buttons) were already in place from previous stories
+  - All existing link hover states (text-teal-700 transition-colors) were already in place
+  - All list item hover states (hover:bg-slate-50) were already in place (ReviewCard, filter dropdowns)
+  - Transitions consistently use duration-150 (buttons) or duration-200 (cards, shadows)
+  - Motion accessibility is important - always wrap scale/transform animations in motion-safe
 ---
