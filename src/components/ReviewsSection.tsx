@@ -83,7 +83,7 @@ export default function ReviewsSection({
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="h-10 px-6 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] transition-all duration-150 text-sm"
+            className="h-10 px-6 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 motion-safe:active:scale-[0.98] transition-all duration-150 text-sm"
           >
             Write a Review
           </button>
@@ -156,7 +156,7 @@ export default function ReviewsSection({
           {!showForm && (
             <button
               onClick={() => setShowForm(true)}
-              className="h-12 px-8 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] transition-all duration-150"
+              className="h-12 px-8 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 motion-safe:active:scale-[0.98] transition-all duration-150"
             >
               Write a Review
             </button>

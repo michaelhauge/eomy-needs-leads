@@ -187,3 +187,72 @@ body {
   );
   background-size: 200% 100%;
 }
+
+/* =============================================================================
+   Motion-Safe Utilities
+   Respect user's "Reduce Motion" preference for accessibility
+   ============================================================================= */
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Preserve background color for shimmer when animation is disabled */
+  .animate-shimmer {
+    animation: none;
+    background: var(--color-navy-200);
+  }
+
+  /* Disable slide-up animation */
+  .animate-slide-up {
+    animation: none;
+  }
+}
+
+/* =============================================================================
+   Micro-interaction Utilities
+   Subtle feedback for pressable elements with motion-safe wrappers
+   ============================================================================= */
+
+/* Pressable element scale effect - motion-safe */
+@media (prefers-reduced-motion: no-preference) {
+  .press-scale:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Hover lift effect for cards - motion-safe */
+@media (prefers-reduced-motion: no-preference) {
+  .hover-lift {
+    transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Link underline animation - motion-safe */
+@media (prefers-reduced-motion: no-preference) {
+  .link-animate {
+    position: relative;
+  }
+  .link-animate::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: currentColor;
+    transition: width 200ms ease-out;
+  }
+  .link-animate:hover::after {
+    width: 100%;
+  }
+}

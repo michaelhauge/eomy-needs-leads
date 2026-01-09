@@ -416,7 +416,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
         {/* Add button */}
         <Link
           href="/recommend/new"
-          className="flex items-center justify-center gap-2 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] transition-all duration-150"
+          className="flex items-center justify-center gap-2 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 motion-safe:active:scale-[0.98] transition-all duration-150"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -428,7 +428,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
       {/* Mobile Add button - visible only on mobile, below filters */}
       <Link
         href="/recommend/new"
-        className="sm:hidden flex items-center justify-center gap-2 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] transition-all duration-150"
+        className="sm:hidden flex items-center justify-center gap-2 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 motion-safe:active:scale-[0.98] transition-all duration-150"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -560,7 +560,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
                   <button
                     type="button"
                     onClick={clearAllFilters}
-                    className="flex-1 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md active:scale-[0.98] transition-all duration-150"
+                    className="flex-1 h-12 px-8 bg-white border border-slate-300 text-slate-700 text-base rounded-lg font-semibold hover:bg-slate-50 hover:shadow-md motion-safe:active:scale-[0.98] transition-all duration-150"
                   >
                     Clear All
                   </button>
@@ -568,7 +568,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
                 <button
                   type="button"
                   onClick={() => setIsFilterModalOpen(false)}
-                  className="flex-1 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 active:scale-[0.98] transition-all duration-150"
+                  className="flex-1 h-12 px-8 bg-teal-600 text-white text-base rounded-lg font-semibold hover:bg-teal-700 hover:shadow-md active:bg-teal-800 motion-safe:active:scale-[0.98] transition-all duration-150"
                 >
                   Show Results
                 </button>

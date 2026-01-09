@@ -45,7 +45,7 @@ export default function RecommendCard({ recommendation }: RecommendCardProps) {
   const hasQuickActions = phoneNumber || websiteUrl;
 
   return (
-    <Link href={`/recommend/${recommendation.id}`} className="block active:scale-[0.98] transition-all duration-200 group">
+    <Link href={`/recommend/${recommendation.id}`} className="block motion-safe:active:scale-[0.98] transition-all duration-200 group">
       <div className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden h-full flex flex-col min-h-[180px] sm:min-h-[200px] relative border border-slate-100">
         {/* Content */}
         <div className="p-5 sm:p-6 flex-1 flex flex-col">
