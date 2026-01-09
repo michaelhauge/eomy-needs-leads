@@ -9,14 +9,17 @@ interface PageProps {
   searchParams: Promise<{
     search?: string;
     category?: string;
+    minRating?: string;
   }>;
 }
 
 async function RecommendationsGrid({ searchParams }: { searchParams: PageProps['searchParams'] }) {
   const params = await searchParams;
+  const minRating = params.minRating ? parseInt(params.minRating, 10) : undefined;
   const recommendations = await getRecommendations({
     search: params.search,
     categorySlug: params.category,
+    minRating,
     limit: 100,
   });
 
@@ -44,9 +47,26 @@ async function RecommendationsGrid({ searchParams }: { searchParams: PageProps['
   );
 }
 
-async function Filters() {
+async function Filters({ searchParams }: { searchParams: PageProps['searchParams'] }) {
+  const params = await searchParams;
+  const minRating = params.minRating ? parseInt(params.minRating, 10) : undefined;
+
   const categories = await getCategoriesWithCounts();
-  return <RecommendFilters categories={categories} />;
+
+  // Get total count (no filters)
+  const totalRecommendations = await getRecommendations({ limit: 1000 });
+  const totalCount = totalRecommendations.length;
+
+  // Get filtered count
+  const filteredRecommendations = await getRecommendations({
+    search: params.search,
+    categorySlug: params.category,
+    minRating,
+    limit: 1000,
+  });
+  const filteredCount = filteredRecommendations.length;
+
+  return <RecommendFilters categories={categories} totalCount={totalCount} filteredCount={filteredCount} />;
 }
 
 export default async function RecommendPage({ searchParams }: PageProps) {
@@ -67,7 +87,7 @@ export default async function RecommendPage({ searchParams }: PageProps) {
         {/* Filters */}
         <div className="mb-6">
           <Suspense fallback={<div className="h-24 sm:h-12 bg-gray-200 rounded-lg animate-pulse" />}>
-            <Filters />
+            <Filters searchParams={searchParams} />
           </Suspense>
         </div>
 
