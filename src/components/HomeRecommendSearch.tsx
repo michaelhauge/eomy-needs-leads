@@ -16,32 +16,45 @@ export default function HomeRecommendSearch() {
     }
   };
 
+  const handleClear = () => {
+    setSearchValue('');
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2 sm:gap-3">
-      <div className="relative flex-1">
-        <input
-          type="text"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          placeholder="Search for lawyers, accountants, IT services..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors text-sm sm:text-base"
-        />
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+      <div className="relative">
+        {/* Search Icon - Left */}
         <svg
-          className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
           fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
+          strokeWidth={2}
           stroke="currentColor"
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
         </svg>
+
+        <input
+          type="text"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          placeholder="Search accountants, lawyers, IT services..."
+          className="w-full h-[52px] sm:h-14 pl-12 pr-12 bg-white border-2 border-slate-200 rounded-xl text-base text-slate-900 placeholder:text-slate-400 outline-none transition-all duration-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+        />
+
+        {/* Clear X Button - Right */}
+        {searchValue && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
       </div>
-      <button
-        type="submit"
-        className="px-4 sm:px-6 py-3 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition-colors whitespace-nowrap"
-      >
-        Search
-      </button>
     </form>
   );
 }
