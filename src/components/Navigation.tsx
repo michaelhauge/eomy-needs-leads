@@ -10,32 +10,31 @@ export default function Navigation() {
   const isRecommendActive = pathname.startsWith('/recommend');
 
   return (
-    <header className="bg-gradient-to-r from-blue-700 to-blue-600 text-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Top bar */}
-        <div className="py-4 sm:py-6">
-          <h1 className="text-xl sm:text-2xl font-bold">EOMY Directory</h1>
-          <p className="text-blue-100 text-sm sm:text-base mt-1">EO Malaysia Member Resources</p>
-        </div>
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="font-semibold text-slate-900 text-lg">
+          EOMY Directory
+        </Link>
 
         {/* Navigation tabs */}
-        <nav className="flex gap-1 -mb-px">
+        <nav className="flex gap-6">
           <Link
             href="/"
-            className={`px-4 py-3 text-sm sm:text-base font-medium rounded-t-lg transition-colors ${
+            className={`text-sm font-medium transition-colors py-1 border-b-2 ${
               isNeedsActive
-                ? 'bg-gray-50 text-blue-700'
-                : 'text-blue-100 hover:text-white hover:bg-blue-600'
+                ? 'text-teal-600 border-teal-600'
+                : 'text-slate-600 border-transparent hover:text-slate-900'
             }`}
           >
             Needs & Leads
           </Link>
           <Link
             href="/recommend"
-            className={`px-4 py-3 text-sm sm:text-base font-medium rounded-t-lg transition-colors ${
+            className={`text-sm font-medium transition-colors py-1 border-b-2 ${
               isRecommendActive
-                ? 'bg-gray-50 text-blue-700'
-                : 'text-blue-100 hover:text-white hover:bg-blue-600'
+                ? 'text-teal-600 border-teal-600'
+                : 'text-slate-600 border-transparent hover:text-slate-900'
             }`}
           >
             Members Recommend
