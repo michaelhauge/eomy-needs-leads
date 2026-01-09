@@ -1,13 +1,13 @@
 /**
- * Database Seed Script
+ * Database Seed Script for Supabase
  *
- * This script inserts the processed data into Vercel Postgres.
- * Requires POSTGRES_URL environment variable to be set.
+ * This script inserts the processed data into Supabase Postgres.
+ * Requires DATABASE_URL environment variable to be set.
  *
- * Run with: POSTGRES_URL="your-connection-string" npx tsx scripts/seed-database.ts
+ * Run with: DATABASE_URL="your-connection-string" npm run db:seed
  */
 
-import { sql } from '@vercel/postgres';
+import postgres from 'postgres';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -69,138 +69,150 @@ async function seedDatabase() {
   console.log('Starting database seed...');
 
   // Check for environment variable
-  if (!process.env.POSTGRES_URL) {
-    console.error('Error: POSTGRES_URL environment variable is required');
+  if (!process.env.DATABASE_URL) {
+    console.error('Error: DATABASE_URL environment variable is required');
+    console.error('Usage: DATABASE_URL="postgres://..." npm run db:seed');
     process.exit(1);
   }
+
+  const sql = postgres(process.env.DATABASE_URL);
 
   // Read the processed data
   const dataPath = path.join(process.env.HOME || '', 'eomy-import-data.json');
   if (!fs.existsSync(dataPath)) {
     console.error(`Data file not found: ${dataPath}`);
-    console.error('Please run the import-data.ts script first.');
+    console.error('Please run: npm run data:process first');
     process.exit(1);
   }
 
   const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
-  // Create tables
-  console.log('\n1. Creating tables...');
+  try {
+    // Create tables
+    console.log('\n1. Creating tables...');
 
-  await sql`
-    CREATE TABLE IF NOT EXISTS categories (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) UNIQUE NOT NULL,
-      slug VARCHAR(100) UNIQUE NOT NULL
-    )
-  `;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS members (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) UNIQUE NOT NULL,
-      leads_count INTEGER DEFAULT 0,
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS needs (
-      id SERIAL PRIMARY KEY,
-      title VARCHAR(200) NOT NULL,
-      original_text TEXT,
-      category_id INTEGER REFERENCES categories(id),
-      date_of_need DATE NOT NULL,
-      status VARCHAR(20) DEFAULT 'Open',
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS leads (
-      id SERIAL PRIMARY KEY,
-      need_id INTEGER REFERENCES needs(id) ON DELETE CASCADE,
-      contact_name VARCHAR(200),
-      contact_info TEXT,
-      provided_by_id INTEGER REFERENCES members(id),
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `;
-
-  console.log('   Tables created successfully');
-
-  // Clear existing data
-  console.log('\n2. Clearing existing data...');
-  await sql`TRUNCATE leads, needs, members, categories RESTART IDENTITY CASCADE`;
-  console.log('   Existing data cleared');
-
-  // Insert categories
-  console.log('\n3. Inserting categories...');
-  for (const cat of categories) {
     await sql`
-      INSERT INTO categories (name, slug)
-      VALUES (${cat.name}, ${cat.slug})
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) UNIQUE NOT NULL,
+        slug VARCHAR(100) UNIQUE NOT NULL
+      )
     `;
-  }
-  console.log(`   Inserted ${categories.length} categories`);
 
-  // Create category lookup map
-  const categoryResult = await sql`SELECT id, slug FROM categories`;
-  const categoryMap: Record<string, number> = {};
-  for (const row of categoryResult.rows) {
-    categoryMap[row.slug] = row.id;
-  }
-
-  // Insert members
-  console.log('\n4. Inserting members...');
-  const memberMap: Record<string, number> = {};
-  for (const member of data.members) {
-    const result = await sql`
-      INSERT INTO members (name, leads_count)
-      VALUES (${member.name}, ${member.leads_count})
-      RETURNING id
-    `;
-    memberMap[member.name] = result.rows[0].id;
-  }
-  console.log(`   Inserted ${data.members.length} members`);
-
-  // Insert needs
-  console.log('\n5. Inserting needs...');
-  const needIdMap: Record<number, number> = {};
-  for (const need of data.needs) {
-    const categoryId = categoryMap[need.category_slug] || categoryMap['business-consulting'];
-    const result = await sql`
-      INSERT INTO needs (title, original_text, category_id, date_of_need, status)
-      VALUES (${need.title}, ${need.original_text}, ${categoryId}, ${need.date_of_need}, ${need.status})
-      RETURNING id
-    `;
-    needIdMap[need.id] = result.rows[0].id;
-  }
-  console.log(`   Inserted ${data.needs.length} needs`);
-
-  // Insert leads
-  console.log('\n6. Inserting leads...');
-  for (const lead of data.leads) {
-    const needId = needIdMap[lead.need_id];
-    const providedById = lead.provided_by ? memberMap[lead.provided_by] : null;
     await sql`
-      INSERT INTO leads (need_id, contact_name, contact_info, provided_by_id)
-      VALUES (${needId}, ${lead.contact_name}, ${lead.contact_info}, ${providedById})
+      CREATE TABLE IF NOT EXISTS members (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) UNIQUE NOT NULL,
+        leads_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW()
+      )
     `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS needs (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(200) NOT NULL,
+        original_text TEXT,
+        category_id INTEGER REFERENCES categories(id),
+        date_of_need DATE NOT NULL,
+        status VARCHAR(20) DEFAULT 'Open',
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS leads (
+        id SERIAL PRIMARY KEY,
+        need_id INTEGER REFERENCES needs(id) ON DELETE CASCADE,
+        contact_name VARCHAR(200),
+        contact_info TEXT,
+        provided_by_id INTEGER REFERENCES members(id),
+        created_at TIMESTAMP DEFAULT NOW()
+      )
+    `;
+
+    console.log('   Tables created successfully');
+
+    // Clear existing data
+    console.log('\n2. Clearing existing data...');
+    await sql`DELETE FROM leads`;
+    await sql`DELETE FROM needs`;
+    await sql`DELETE FROM members`;
+    await sql`DELETE FROM categories`;
+    console.log('   Existing data cleared');
+
+    // Insert categories
+    console.log('\n3. Inserting categories...');
+    for (const cat of categories) {
+      await sql`
+        INSERT INTO categories (name, slug)
+        VALUES (${cat.name}, ${cat.slug})
+        ON CONFLICT (name) DO NOTHING
+      `;
+    }
+    console.log(`   Inserted ${categories.length} categories`);
+
+    // Create category lookup map
+    const categoryResult = await sql`SELECT id, slug FROM categories`;
+    const categoryMap: Record<string, number> = {};
+    for (const row of categoryResult) {
+      categoryMap[row.slug] = row.id;
+    }
+
+    // Insert members
+    console.log('\n4. Inserting members...');
+    const memberMap: Record<string, number> = {};
+    for (const member of data.members) {
+      const result = await sql`
+        INSERT INTO members (name, leads_count)
+        VALUES (${member.name}, ${member.leads_count})
+        RETURNING id
+      `;
+      memberMap[member.name] = result[0].id;
+    }
+    console.log(`   Inserted ${data.members.length} members`);
+
+    // Insert needs
+    console.log('\n5. Inserting needs...');
+    const needIdMap: Record<number, number> = {};
+    for (const need of data.needs) {
+      const categoryId = categoryMap[need.category_slug] || categoryMap['business-consulting'];
+      const result = await sql`
+        INSERT INTO needs (title, original_text, category_id, date_of_need, status)
+        VALUES (${need.title}, ${need.original_text}, ${categoryId}, ${need.date_of_need}, ${need.status})
+        RETURNING id
+      `;
+      needIdMap[need.id] = result[0].id;
+    }
+    console.log(`   Inserted ${data.needs.length} needs`);
+
+    // Insert leads
+    console.log('\n6. Inserting leads...');
+    for (const lead of data.leads) {
+      const needId = needIdMap[lead.need_id];
+      const providedById = lead.provided_by ? memberMap[lead.provided_by] : null;
+      await sql`
+        INSERT INTO leads (need_id, contact_name, contact_info, provided_by_id)
+        VALUES (${needId}, ${lead.contact_name}, ${lead.contact_info}, ${providedById})
+      `;
+    }
+    console.log(`   Inserted ${data.leads.length} leads`);
+
+    // Verify data
+    console.log('\n7. Verifying data...');
+    const needsCount = await sql`SELECT COUNT(*) as count FROM needs`;
+    const leadsCount = await sql`SELECT COUNT(*) as count FROM leads`;
+    const membersCount = await sql`SELECT COUNT(*) as count FROM members`;
+
+    console.log(`   Needs in database: ${needsCount[0].count}`);
+    console.log(`   Leads in database: ${leadsCount[0].count}`);
+    console.log(`   Members in database: ${membersCount[0].count}`);
+
+    console.log('\n✅ Database seeding complete!');
+
+  } finally {
+    await sql.end();
   }
-  console.log(`   Inserted ${data.leads.length} leads`);
-
-  // Verify data
-  console.log('\n7. Verifying data...');
-  const needsCount = await sql`SELECT COUNT(*) as count FROM needs`;
-  const leadsCount = await sql`SELECT COUNT(*) as count FROM leads`;
-  const membersCount = await sql`SELECT COUNT(*) as count FROM members`;
-
-  console.log(`   Needs in database: ${needsCount.rows[0].count}`);
-  console.log(`   Leads in database: ${leadsCount.rows[0].count}`);
-  console.log(`   Members in database: ${membersCount.rows[0].count}`);
-
-  console.log('\n✅ Database seeding complete!');
 }
 
 seedDatabase().catch(console.error);

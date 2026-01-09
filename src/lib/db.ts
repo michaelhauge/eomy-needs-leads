@@ -1,7 +1,8 @@
-import { sql } from '@vercel/postgres';
+import postgres from 'postgres';
 
-// Check if we have a database connection
-const hasDatabase = !!process.env.POSTGRES_URL;
+// Initialize connection (works with Supabase or any Postgres)
+const connectionString = process.env.DATABASE_URL || '';
+const sql = connectionString ? postgres(connectionString) : null;
 
 // Types
 export interface Category {
@@ -44,8 +45,8 @@ export interface Lead {
 
 // Database functions
 export async function getCategories(): Promise<Category[]> {
-  if (!hasDatabase) return [];
-  const { rows } = await sql<Category>`
+  if (!sql) return [];
+  const rows = await sql<Category[]>`
     SELECT id, name, slug FROM categories ORDER BY name
   `;
   return rows;
@@ -58,52 +59,33 @@ export async function getNeeds(options?: {
   limit?: number;
   offset?: number;
 }): Promise<Need[]> {
-  if (!hasDatabase) return [];
+  if (!sql) return [];
   const { categorySlug, status, search, limit = 50, offset = 0 } = options || {};
 
-  let query = `
+  // Build dynamic query with conditions
+  const rows = await sql<Need[]>`
     SELECT
       n.id, n.title, n.original_text, n.category_id, n.date_of_need, n.status, n.created_at,
       c.name as category_name, c.slug as category_slug,
-      COUNT(l.id) as leads_count
+      COUNT(l.id)::int as leads_count
     FROM needs n
     LEFT JOIN categories c ON n.category_id = c.id
     LEFT JOIN leads l ON n.id = l.need_id
     WHERE 1=1
-  `;
-
-  const params: (string | number)[] = [];
-  let paramIndex = 1;
-
-  if (categorySlug) {
-    query += ` AND c.slug = $${paramIndex++}`;
-    params.push(categorySlug);
-  }
-
-  if (status) {
-    query += ` AND n.status = $${paramIndex++}`;
-    params.push(status);
-  }
-
-  if (search) {
-    query += ` AND n.title ILIKE $${paramIndex++}`;
-    params.push(`%${search}%`);
-  }
-
-  query += `
+      ${categorySlug ? sql`AND c.slug = ${categorySlug}` : sql``}
+      ${status ? sql`AND n.status = ${status}` : sql``}
+      ${search ? sql`AND n.title ILIKE ${'%' + search + '%'}` : sql``}
     GROUP BY n.id, c.name, c.slug
     ORDER BY n.date_of_need DESC
-    LIMIT $${paramIndex++} OFFSET $${paramIndex++}
+    LIMIT ${limit} OFFSET ${offset}
   `;
-  params.push(limit, offset);
 
-  const { rows } = await sql.query(query, params);
-  return rows as Need[];
+  return rows;
 }
 
 export async function getNeedById(id: number): Promise<Need | null> {
-  if (!hasDatabase) return null;
-  const { rows } = await sql<Need>`
+  if (!sql) return null;
+  const rows = await sql<Need[]>`
     SELECT
       n.id, n.title, n.original_text, n.category_id, n.date_of_need, n.status, n.created_at,
       c.name as category_name, c.slug as category_slug
@@ -115,8 +97,8 @@ export async function getNeedById(id: number): Promise<Need | null> {
 }
 
 export async function getLeadsForNeed(needId: number): Promise<Lead[]> {
-  if (!hasDatabase) return [];
-  const { rows } = await sql<Lead>`
+  if (!sql) return [];
+  const rows = await sql<Lead[]>`
     SELECT
       l.id, l.need_id, l.contact_name, l.contact_info, l.provided_by_id, l.created_at,
       m.name as provided_by_name
@@ -129,8 +111,8 @@ export async function getLeadsForNeed(needId: number): Promise<Lead[]> {
 }
 
 export async function getLeaderboard(limit: number = 20): Promise<Member[]> {
-  if (!hasDatabase) return [];
-  const { rows } = await sql<Member>`
+  if (!sql) return [];
+  const rows = await sql<Member[]>`
     SELECT id, name, leads_count, created_at
     FROM members
     WHERE leads_count > 0

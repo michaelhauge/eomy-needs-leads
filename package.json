@@ -12,8 +12,8 @@
     "data:process": "tsx scripts/import-data.ts"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.10.0",
     "next": "16.1.1",
+    "postgres": "^3.4.8",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
