@@ -11,6 +11,28 @@ interface RecommendFiltersProps {
   filteredCount: number;
 }
 
+// Helper to get category name from slug
+function getCategoryName(categories: Category[], slug: string): string {
+  const cat = categories.find((c) => c.slug === slug);
+  return cat?.name || slug;
+}
+
+// Helper to get rating label
+function getRatingLabel(rating: string): string {
+  return rating === '4' ? '4+ Stars' : rating === '3' ? '3+ Stars' : rating;
+}
+
+// Helper to get sort label
+function getSortLabel(sort: SortOption): string {
+  const labels: Record<SortOption, string> = {
+    rating: 'Highest Rated',
+    reviews: 'Most Reviewed',
+    newest: 'Newest',
+    name: 'A-Z',
+  };
+  return labels[sort];
+}
+
 export default function RecommendFilters({ categories, totalCount, filteredCount }: RecommendFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -20,11 +42,30 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
   const currentSort = (searchParams.get('sort') || 'rating') as SortOption;
 
   const [searchValue, setSearchValue] = useState(currentSearch);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  // Count active filters (excluding default sort)
+  const activeFilterCount =
+    (currentCategory ? 1 : 0) +
+    (currentMinRating ? 1 : 0) +
+    (currentSort !== 'rating' ? 1 : 0);
 
   // Sync search value with URL when URL changes (e.g., browser back/forward)
   useEffect(() => {
     setSearchValue(currentSearch);
   }, [currentSearch]);
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isFilterModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isFilterModalOpen]);
 
   // Debounced search - update URL after 300ms of no typing
   const updateSearchURL = useCallback((value: string) => {
@@ -88,50 +129,128 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
     router.push(`/recommend?${params.toString()}`);
   };
 
+  const clearFilter = (filterType: 'category' | 'minRating' | 'sort') => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete(filterType);
+    router.push(`/recommend?${params.toString()}`);
+  };
+
+  const clearAllFilters = () => {
+    const params = new URLSearchParams();
+    if (currentSearch) {
+      params.set('search', currentSearch);
+    }
+    router.push(`/recommend?${params.toString()}`);
+    setIsFilterModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col gap-3">
-      {/* Search */}
-      <div className="relative">
-        <input
-          type="text"
-          value={searchValue}
-          onChange={handleSearchChange}
-          placeholder="Search recommendations..."
-          className="w-full min-h-[48px] px-4 py-3 pl-11 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none bg-white text-base"
-        />
-        <svg
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+      {/* Search row with Filters button on mobile */}
+      <div className="flex gap-2">
+        {/* Search */}
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={searchValue}
+            onChange={handleSearchChange}
+            placeholder="Search recommendations..."
+            className="w-full min-h-[48px] px-4 py-3 pl-11 pr-10 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none bg-white text-base"
           />
-        </svg>
-        {searchValue && (
-          <button
-            type="button"
-            onClick={clearSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Clear search"
+          <svg
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          {searchValue && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 -translate-y-1/2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Clear search"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        {/* Filters button - visible only on mobile */}
+        <button
+          type="button"
+          onClick={() => setIsFilterModalOpen(true)}
+          className="sm:hidden flex items-center justify-center gap-2 min-w-[48px] min-h-[48px] px-4 py-3 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors relative"
+          aria-label="Open filters"
+        >
+          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          <span className="text-gray-700 font-medium">Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-teal-600 text-white text-xs rounded-full flex items-center justify-center font-medium">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* Category dropdown, Rating filter, and Add button */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Active filter pills - visible on mobile when filters are applied */}
+      {activeFilterCount > 0 && (
+        <div className="flex flex-wrap gap-2 sm:hidden">
+          {currentCategory && (
+            <button
+              type="button"
+              onClick={() => clearFilter('category')}
+              className="inline-flex items-center gap-1.5 min-h-[44px] px-3 py-2 bg-teal-100 text-teal-700 rounded-full text-sm font-medium hover:bg-teal-200 transition-colors"
+            >
+              {getCategoryName(categories, currentCategory)}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+          {currentMinRating && (
+            <button
+              type="button"
+              onClick={() => clearFilter('minRating')}
+              className="inline-flex items-center gap-1.5 min-h-[44px] px-3 py-2 bg-teal-100 text-teal-700 rounded-full text-sm font-medium hover:bg-teal-200 transition-colors"
+            >
+              {getRatingLabel(currentMinRating)}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+          {currentSort !== 'rating' && (
+            <button
+              type="button"
+              onClick={() => clearFilter('sort')}
+              className="inline-flex items-center gap-1.5 min-h-[44px] px-3 py-2 bg-teal-100 text-teal-700 rounded-full text-sm font-medium hover:bg-teal-200 transition-colors"
+            >
+              {getSortLabel(currentSort)}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Desktop filters row - hidden on mobile */}
+      <div className="hidden sm:flex flex-row gap-3">
         <select
           value={currentCategory}
           onChange={handleCategoryChange}
-          className={`flex-1 sm:flex-none w-full sm:w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+          className={`flex-none w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
             currentCategory
               ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
               : 'border-gray-200 bg-white'
@@ -149,7 +268,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
         <select
           value={currentMinRating}
           onChange={handleRatingChange}
-          className={`flex-1 sm:flex-none w-full sm:w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+          className={`flex-none w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
             currentMinRating
               ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
               : 'border-gray-200 bg-white'
@@ -164,7 +283,7 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
         <select
           value={currentSort}
           onChange={handleSortChange}
-          className={`flex-1 sm:flex-none w-full sm:w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+          className={`flex-none w-auto min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
             currentSort !== 'rating'
               ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
               : 'border-gray-200 bg-white'
@@ -188,6 +307,17 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
         </Link>
       </div>
 
+      {/* Mobile Add button - visible only on mobile, below filters */}
+      <Link
+        href="/recommend/new"
+        className="sm:hidden flex items-center justify-center gap-2 min-h-[48px] px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium text-base"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+        </svg>
+        Add Recommendation
+      </Link>
+
       {/* Results count and search summary */}
       <div className="text-sm text-gray-600">
         {currentSearch ? (
@@ -203,6 +333,132 @@ export default function RecommendFilters({ categories, totalCount, filteredCount
           <span>Showing {filteredCount} of {totalCount} recommendation{totalCount !== 1 ? 's' : ''}</span>
         )}
       </div>
+
+      {/* Mobile Filter Bottom Sheet Modal */}
+      {isFilterModalOpen && (
+        <div className="fixed inset-0 z-50 sm:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setIsFilterModalOpen(false)}
+          />
+
+          {/* Bottom Sheet */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-hidden animate-slide-up">
+            {/* Handle */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 pb-3 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+              <button
+                type="button"
+                onClick={() => setIsFilterModalOpen(false)}
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+                aria-label="Close filters"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Filter Options */}
+            <div className="overflow-y-auto px-4 py-4 space-y-6" style={{ maxHeight: 'calc(85vh - 180px)' }}>
+              {/* Category Filter */}
+              <div>
+                <label htmlFor="mobile-category" className="block text-sm font-medium text-gray-700 mb-2">
+                  Category
+                </label>
+                <select
+                  id="mobile-category"
+                  value={currentCategory}
+                  onChange={handleCategoryChange}
+                  className={`w-full min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+                    currentCategory
+                      ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
+                      : 'border-gray-200 bg-white'
+                  }`}
+                >
+                  <option value="">All Categories</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.slug}>
+                      {cat.name} ({cat.recommendation_count})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Rating Filter */}
+              <div>
+                <label htmlFor="mobile-rating" className="block text-sm font-medium text-gray-700 mb-2">
+                  Minimum Rating
+                </label>
+                <select
+                  id="mobile-rating"
+                  value={currentMinRating}
+                  onChange={handleRatingChange}
+                  className={`w-full min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+                    currentMinRating
+                      ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
+                      : 'border-gray-200 bg-white'
+                  }`}
+                >
+                  <option value="">All Ratings</option>
+                  <option value="4">4+ Stars</option>
+                  <option value="3">3+ Stars</option>
+                </select>
+              </div>
+
+              {/* Sort Option */}
+              <div>
+                <label htmlFor="mobile-sort" className="block text-sm font-medium text-gray-700 mb-2">
+                  Sort By
+                </label>
+                <select
+                  id="mobile-sort"
+                  value={currentSort}
+                  onChange={handleSortChange}
+                  className={`w-full min-h-[48px] px-4 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none cursor-pointer text-base ${
+                    currentSort !== 'rating'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700 font-medium'
+                      : 'border-gray-200 bg-white'
+                  }`}
+                >
+                  <option value="rating">Highest Rated</option>
+                  <option value="reviews">Most Reviewed</option>
+                  <option value="newest">Newest</option>
+                  <option value="name">A-Z</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="px-4 py-4 border-t border-gray-200 bg-white">
+              <div className="flex gap-3">
+                {activeFilterCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearAllFilters}
+                    className="flex-1 min-h-[48px] px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium text-base"
+                  >
+                    Clear All
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setIsFilterModalOpen(false)}
+                  className="flex-1 min-h-[48px] px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium text-base"
+                >
+                  Show Results
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
